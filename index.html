@@ -25,6 +25,29 @@ body{
 #logo div{
 	font-size: 24px;
 }
+#github {
+	position: absolute;
+	right: -40px;
+	top: -20px;
+	width: 120px;
+	text-align: center;
+	padding: 30px 10px 10px 20px;
+	background: rgb(180, 206, 117);
+	-webkit-transform: rotate(30deg);
+	-moz-transform: rotate(30deg);
+	-ms-transform: rotate(30deg);
+	-o-transform: rotate(30deg);
+	transform: rotate(30deg);
+	color:rgb(136, 168, 59);
+	text-decoration: none;
+	display: block;
+}
+#github:link,#github:hover,#github:visited{
+	color:rgb(136, 168, 59);
+}
+#github:hover{
+	opacity: 0.8;
+}
 #applogo{
 	position: absolute;
 	color: #fff;
@@ -214,6 +237,7 @@ body{
 	text-align: center;
 	background: rgb(164, 192, 92);
 	padding: 20px;
+	color: #fff;
 }
 #footer a,#footer a:link,#footer a:hover,#footer a:visited{
 	color: #fff;
@@ -228,12 +252,12 @@ body{
 <script>
 __Model.add("main",function(){
 	/*
+		<a id="github" target="_blank" href="https://github.com/Sys-Lab/syslib">Fork me</a>
 		<div id="logo" style="height:%@300%px;font-size:%@180%px;">
 			SYSLIB
 			<div>Just another opensource javascript libary</div>
 		</div>
 		<div id="applogo" style="top: %@262%px;right:%&310%px;">FOR HTML5 APP</div>
-		
 		<div id="not_doneyet">It's Not done yet ! We are under Heavy DEV !!</div>
 		<div id="dowloadbtn" style="top: %@310%px;">Download Now</div>
 		<div id="features">
@@ -288,7 +312,7 @@ __Model.add("main",function(){
 					<div class="code">node build.js</div>
 					Follow instructions.			
 					Good Luck
-				<div>
+				</div>
 			</div>
 		</div>
 		<div id="footer">By <a target="_blank" href="https://github.com/scientihark/">Scientihark</a></div>
