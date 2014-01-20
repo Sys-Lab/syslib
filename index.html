@@ -186,11 +186,34 @@ body{
 	-o-transform: rotate(-15deg);
 	transform: rotate(-15deg);
 }
+#components_go:hover,#dowloadbtn:hover{
+	opacity: 0.8;
+}
+.code {
+	padding: 10px;
+	background: rgb(99, 119, 50);
+	margin: 5px;
+	border-radius: 5px;
+	color: #fff;
+}
+#Build_with_node {
+	position: absolute;
+	right: 40px;
+	background: rgb(143, 170, 75);
+	padding: 20px;
+	color: #fff;
+	display: none;
+	opacity: 0;
+	-webkit-transition:all .3s ease-in-out;
+	-moz-transition:all .3s ease-in-out;
+	-ms-transition:all .3s ease-in-out;
+	-o-transition:all .3s ease-in-out;
+	transition:all .3s ease-in-out;
+}
 #footer {
 	text-align: center;
 	background: rgb(164, 192, 92);
 	padding: 20px;
-	color: #fff;
 }
 #footer a,#footer a:link,#footer a:hover,#footer a:visited{
 	color: #fff;
@@ -258,6 +281,14 @@ __Model.add("main",function(){
 					<div id="components_des"></div>
 					<div id="components_go">Build</div>
 				</div>
+				<div id="Build_with_node" style="top: %@928%px;width: %&400%px;">
+					Just run
+					<div class="code">git https://github.com/Sys-Lab/syslib.git</div>
+					Then run
+					<div class="code">node build.js</div>
+					Follow instructions.			
+					Good Luck
+				<div>
 			</div>
 		</div>
 		<div id="footer">By <a target="_blank" href="https://github.com/scientihark/">Scientihark</a></div>
@@ -386,6 +417,20 @@ __Model.add("main",function(){
 				this.datas.des,this.datas.features])
 		},false)
 	}
+	_f("#Buildwithnode").addListener("mouseover",function(){
+			_f("#Build_with_node").style.display="block";
+			setTimeout(function(){
+				_f("#Build_with_node").style.opacity=1;
+			},300)
+	},false)
+	_f("#Build_with_node").addListener("mouseout",function(e){
+			if(__Util.checkFather(this,e)){
+				_f("#Build_with_node").style.opacity=0;
+				setTimeout(function(){
+					_f("#Build_with_node").style.display="none";
+				},300)
+			}
+	},false)
 	_f("#dowloadbtn").addListener("click",function(){
 			document.body.scrollTop=window.innerHeight;
 	},false)
