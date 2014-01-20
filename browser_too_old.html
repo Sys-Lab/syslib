@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style type="text/css">
+body {
+	background-color: #242424;
+	margin-left: 0px;
+	margin-top: 0px;
+}
+</style>
+</head>
+<body>
+<center id="abc">
+	<img id="pic" src="media/browser_too_old.jpg">
+	<div class="def">fgdgfxd</div>
+</center>
+<div id="sys_main_playground"></div>
+<script>
+document.getElementById('pic').style.top=(window.innerHeight-600)/2+"px";
+</script>
+<script src="SYSLIB.js"></script>
+<script>
+_f("#abc").find(".def")[0].addListener("click",function(e){alert(e)},false);
+</script>
+</body>
+</html>
