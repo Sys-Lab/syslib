@@ -1,6 +1,6 @@
 # SYSLIB
 
-<a href="https://github.com/Sys-Lab/syslib" target="_blank">Demo & website</a>
+<a href="http://sys-lab.github.io/syslib" target="_blank">Demo & website</a>
 
 
 This is SysLab's own lib.
