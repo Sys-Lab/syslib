@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style type="text/css">
+body {
+	margin-left: 0px;
+	margin-top: 0px;
+}
+</style>
+<link href="../src/ui.css" rel="stylesheet">
+</head>
+<body>
+<div id="sys_main_playground"></div>
+<script src="../build/SYSLIB.js"></script>
+<script>
+//_f("#abc").find(".def")[0].addListener("click",function(e){alert(e)},false);
+window.nsloaded=function(){
+	__Template.build(function(){/*
+		<div>Div test  test  test</div>
+		<ui:img src="http://1.node.marliang.com/assert/media/header.jpg" style="width:200px;height:300px"></ui>
+		<ui:btn>test UI botton</ui>
+		<ui:btn type="standard">test UI botton</ui>
+		<ui:checkbox class="blue">test UI Checkbox</ui>
+		<ui:checkbox checked="true">test UI Checkbox checked</ui>
+		<ui:checkbox checked_text="i'm checked">test UI Checkbox checked_text</ui>
+		<ui:checkbox checked disabled="true" id="iio">test UI Checkbox checked</ui>
+		<ui:radio group="testgroup" value="0">test UI Radio 1</ui>
+		<ui:radio group="testgroup" value="1" class="lime">test UI Radio 2</ui>
+		<ui:radio group="testgroup" checked_text="i'm checked" value="2">test UI Radio 3</ui>
+		<ui:radio group="testgroup2">test UI Radio 1 group2</ui>
+	*/},['1','2','3'],_f("#sys_main_playground"));
+	setTimeout(function(){
+		_f("#iio").enable();
+	},5000)
+	_listen("radio-testgroup-change",function(e){
+		console.log(e);
+	})
+}
+</script>
+</body>
+</html>

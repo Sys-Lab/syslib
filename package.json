@@ -1,0 +1,33 @@
+{
+  "name": "syslib",
+  "version": "0.0.1",
+  "description": "small lib from SysLab",
+  "keywords": [
+    "Javascript"
+  ],
+  "author": {
+    "name": "SYSLAB: scientihark",
+    "email": "mgbbs.mobile@gmail.com",
+    "url": "http://www.syslab.us/"
+  },
+  "main": "build.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Sys-Lab/syslib.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Sys-Lab/syslib/issues",
+    "email": "mgbbs.mobile@gmail.com"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "dependencies": {
+    "cli-color": "0.2.2",
+    "optimist": "0.6.0",
+    "uglify-js": "2.4.0"
+  },
+  "licence": "MIT",
+  "readme": "# SYSLIB Build Tool.\r\nBuild 2014012001.\r\n\r\n",
+  "readmeFilename": "README.md"
+}
