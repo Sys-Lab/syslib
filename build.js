@@ -50,6 +50,7 @@ if((!argv)||argv.help){
 	console.log("\t--socket\t\tinclude Socket [bugy now]");
 	console.log("\t--sound\t\t\tinclude Sound");
 	console.log("\t--template\t\tinclude Template");
+	console.log("\t--ui\t\tinclude UI");
 	console.log("\t--util\t\t\tinclude Util");
 	console.log("\t--vilade\t\tinclude Vilade");
 	console.log("");
@@ -64,6 +65,7 @@ if((!argv)||argv.help){
 		dom:0,
 		event:0,
 		template:0,
+		ui:0,
 		model:0,
 		ajax:0,
 		vilade:0,
@@ -144,6 +146,10 @@ if((!argv)||argv.help){
 	}
 	if(argv.template){
 		buildlist.template=1;
+		noneargv=1;
+	}
+	if(argv.ui){
+		buildlist.ui=1;
 		noneargv=1;
 	}
 	if(argv.util){

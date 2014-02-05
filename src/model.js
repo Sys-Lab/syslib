@@ -4,7 +4,7 @@
 // NEED:NONE
 //
 
-__Model = SYSLIB.namespace("syslib.model");
+__Model = SYSLIB.namespace("syslib.model","syslib.template");
 __Model.t = function (name) {
 	if(!__Model.list[name]){
 		__Error.log(1,"Model : model "+name+" dosen't exist .");

@@ -7,7 +7,9 @@
 var HEIGHTEST=0,
   LOWEST=Math.pow(2, 53);
 
-var __Event=SYSLIB.namespace("syslib.event");
+var __Event=SYSLIB.namespace("syslib.event","syslib.util",function(){
+	__Event.global.eventtoken="global";
+});
 ////////////////////////////////
 // There is a level define listener's
 // order with same event.
@@ -20,13 +22,14 @@ var __Event=SYSLIB.namespace("syslib.event");
 // trigger order is from HEIGHTEST(0) to LOWEST(Max val)
 ////////////////////////////////
 __Event.Listeners={};
+__Event.global={};
 __Event.Listen=function(event,listener,nopopup,level,element){
 	if(!element){
-		element='global';
+		element=__Event.global;
 	}
 	if(!element.eventtoken){
 		element.eventtoken=__Util.token();
-		if(element!='global'){
+		if(element!=__Event.global){
 			element.setAttribute("eventtoken",element.eventtoken)
 		}
 	}
@@ -35,7 +38,7 @@ __Event.Listen=function(event,listener,nopopup,level,element){
 	}
 	if(!__Event.Listeners[element.eventtoken][event]){
 		__Event.Listeners[element.eventtoken][event]=new Array();
-		if(element!='global'){
+		if(element!=__Event.global){
 			if(!Element.prototype.addEventListener){
 				element.attachEvent('on'+event,function(){
 					__Event.emit(event,window.event,element,this);
@@ -95,7 +98,7 @@ __Event.Listen=function(event,listener,nopopup,level,element){
 }
 __Event.unListen=function(event,listener,nopopup,level,element,all){
 	if(!element){
-		element='global';
+		element=__Event.global;
 	}
 	if(!element.eventtoken){
 		__Error.log(1,"Event : element With no eventtoken!");
@@ -119,9 +122,30 @@ __Event.unListen=function(event,listener,nopopup,level,element,all){
 		}
 	}
 }
+SYSLIB.settings.set('event_safe',true);
+__Event.clear=function(element){
+	if(!element){
+		element=__Event.global;
+	}
+	if(element==__Event.global&&SYSLIB.settings.event_safe){
+		__Error.log(1,"Event : can't clear global settings! Please set event_safe to false.");
+		return;
+	}
+	if(!element.eventtoken){
+		__Error.log(1,"Event : element With no eventtoken!");
+		return;
+	}
+	var elementinfo=(element.id)?("#"+element.id):element.eventtoken;
+	if(!__Event.Listeners[element.eventtoken]){
+		__Error.log(1,"Event : Event "+elementinfo+"."+event+" has no Listener to clear !");
+		return;
+	}
+	__Event.Listeners[element.eventtoken]=[];
+	__Error.log(0,"Event : Event "+elementinfo+"'s Listener is cleared.");
+}
 __Event.emit=function(event,data,element,scope){
 	if(!element){
-		element='global';
+		element=__Event.global;
 	}
 	if(!element.eventtoken){
 		__Error.log(1,"Event : element With no eventtoken!");

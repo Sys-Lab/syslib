@@ -18,10 +18,37 @@ SYSLIB={
 
 	//namespace system
 	namespaces:{},
-	namespace:function (ns,require) {
-		var ns = ns.split("."),
+	namespaces_list:{},
+	namespaces_checklock:0,
+	namespaces_requireEnd:[],
+	namespaces_checkend:function(){
+		if(SYSLIB.namespaces_checklock){
+	      	clearTimeout(SYSLIB.namespaces_checklock);
+	    }
+	    SYSLIB.namespaces_checklock=setTimeout(function(){
+	    	__Error.log(0,"Namespace : all NS loaded");
+	    	for(var i in SYSLIB.namespaces_list){
+	    		if(SYSLIB.namespaces_list[i]!=1){
+					__Error.log(2,"Namespace : can't find required ns "+i)
+					return;
+				}
+	    	}
+	    	for(var i=0;i<SYSLIB.namespaces_requireEnd.length;i++){
+	    		SYSLIB.namespaces_requireEnd[i]();
+	    	}
+	    	if(window.nsloaded){
+	    		window.nsloaded();
+	    	}
+	    },50);
+	},
+	namespace:function (nsname,require,requireEnd) {
+		var ns = nsname.split("."),
 			opns = SYSLIB.namespaces[ns[0]],
 			i = 1;
+		SYSLIB.namespaces_list[nsname]=1;
+		if(requireEnd){
+			SYSLIB.namespaces_requireEnd.push(requireEnd)
+		}
 		if(require&&require!=-1){
 			if(typeof(require)!='object'){
 				var tmprequire=[];
@@ -29,12 +56,11 @@ SYSLIB={
 				require=tmprequire;
 			}
 			for(i=0;i<require.length;i++){
-				if(!SYSLIB.namespace(require[i],-1)){
-					//expection
-					__Error.log(2,"Namespace : can't find required ns "+require[i])
-					return;
+				if(!SYSLIB.namespaces_list[require[i]]){
+					SYSLIB.namespaces_list[require[i]]=-1;
 				}
 			}
+			SYSLIB.namespaces_checkend();
 		}
 		if(typeof(opns) != 'function'){
 				SYSLIB.namespaces[ns[0]] = function () {};

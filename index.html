@@ -363,6 +363,10 @@ __Model.add("main",function(){
 			dependencies:['core'],
 			des:"Basic template support.",
 			features:"auto width/height,language file"
+		},ui:{
+			dependencies:['core','template','dom','event','util'],
+			des:"UI engine support.",
+			features:"basic UIs ,can be extended. <br/>MUST INCLUDE ui.css !!!"
 		},util:{
 			dependencies:['core'],
 			des:"some utils",

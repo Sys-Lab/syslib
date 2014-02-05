@@ -3,7 +3,7 @@
 // REQUIRE:CORE,MATH
 // NEED:EVENT[ Bind event to dom obj ],UTIL[ dom obj global position ]
 //
-__Dom = SYSLIB.namespace("syslib.dom");
+__Dom = SYSLIB.namespace("syslib.dom","syslib.math");
 __Dom.domcache = {
 	allnodes:[],
 	byid:{},
@@ -47,12 +47,61 @@ __Dom.nodeparser=function(node){
 	node.replace=function(ipt,to){
 		return __Dom.class(this).replace(ipt,to);
 	}
+  node.getAttr=function(attrnames){
+    if(typeof(attrnames)!='object'){
+      return this.getAttribute(attrnames);
+    }else{
+      var attrs=[];
+      for(var i=0;i<attrnames.length;i++){
+        attrs.push(this.getAttribute(attrnames[i]))
+      }
+      return attrs;
+    }
+  }
+  node.setAttr=function(attrsets,val){
+    if(typeof(attrsets)!='object'){
+      if(typeof(val)!='undefined'){
+        this.setAttribute(attrsets,val);
+      }else{
+        __Error.log(2,"Node : can't set attribute missing value!");
+      }
+    }else{
+      if(attrsets.length){
+        if(typeof(val)!='undefined'){
+          if(typeof(val)!='object'){
+            for(var i=0;i<attrsets.length;i++){
+              this.setAttribute(attrsets[i],val);
+            }
+          }else{
+            if(val.length){
+              if(val.length>=attrsets.length){
+                this.setAttribute(attrsets[i],val[i]);
+              }else{
+                __Error.log(2,"Node : can't set attribute when key's length > value's length!");
+              }
+            }else{
+              __Error.log(2,"Node : can't set attribute invilade value!");
+            }
+          } 
+        }else{
+          __Error.log(2,"Node : can't set attribute missing value!");
+        }
+      }else{
+        for(var i in attrsets){
+          this.setAttribute(i,attrsets[i]);
+        }
+      }
+    }
+  }
   if(__Event){
       node.addListener=function(event,listener,nopopup,level){
         return __Event.Listen(event,listener,nopopup,level,this);
       }
       node.removeListener=function(event,listener,nopopup,level){
         return __Event.unListen(event,listener,nopopup,level,this);
+      }
+      node.clearListener=function(){
+        return __Event.clear(this);
       }
   }
   if(__Util){

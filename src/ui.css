@@ -1,0 +1,74 @@
+[color="green"]{
+  color:#a3cd3d;
+}
+[color="orange"]{
+  color:#f66b30;
+}
+.SYSUI_btn_standard {
+  border-width: 2px;
+  border-style: solid;
+  display: inline-block;
+  padding: 8px 15px;
+  border-radius: 30px;
+  cursor: pointer;
+  border-color:#a3cd3d;
+  color:#a3cd3d;
+}
+.SYSUI_btn_standard:hover{
+  color:#fff;
+  background-color:#a3cd3d; 
+}
+.SYSUI_btn_standard [color="green"]{
+  border-color:#a3cd3d;
+}
+.SYSUI_btn_standard:hover [color="green"]{
+  background-color:#a3cd3d; 
+}
+.SYSUI_btn_standard [color="orange"]{
+  border-color:#f66b30;
+}
+.SYSUI_btn_standard:hover [color="orange"]{
+  background-color:#f66b30;
+}
+.SYSUI_checkbox_standard{
+  cursor: pointer;
+  padding: 5px;
+}
+.checks_text {
+  color: #727070;
+  display: inline-block;
+  position: relative;
+  left: 10px;
+  top: -2px;
+}
+.checks_box {
+  width: 5px;
+  height: 5px;
+  padding: 2px;
+  position: relative;
+  background-color: #fff;
+  top: -1px;
+  border: solid 2px #fff;
+  box-shadow: 0 0 0 2px #727070; 
+  display: inline-block;
+}
+.checks_checked .checks_box, .checks:hover .checks_box {
+  background-color: #a3cd3d;
+  box-shadow: 0 0 0 2px #a3cd3d; 
+}
+.checks_checked .checks_text, .checks:hover .checks_text {
+  color: #a3cd3d; 
+}
+.checks_disabled .checks_box{
+  box-shadow: 0 0 0 2px #9B9A9A;
+}
+.checks_disabled .checks_text{
+  color: #9B9A9A;
+}
+.SYSUI_radio_standard{
+  cursor: pointer;
+  padding: 5px;
+}
+.SYSUI_radio_standard .checks_box{
+  border-radius: 20px;
+}
