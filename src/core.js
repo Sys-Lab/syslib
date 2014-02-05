@@ -9,9 +9,13 @@ SYSLIB={
     settings:{
     	release:0,
     	loglevel:0,
-    	set:function(settings){
-    		for(var key in settings[key]){
-    			SYSLIB.settings[key]=settings[key];
+    	set:function(settings,val){
+    		if(val){
+    			SYSLIB.settings[settings]=val;
+    		}else{
+    			for(var key in settings[key]){
+	    			SYSLIB.settings[key]=settings[key];
+	    		}
     		}
     	}
     },

@@ -8,10 +8,15 @@
 // Basic UI require ui.css
 //
 
-
 __UI=SYSLIB.namespace("syslib.ui",["syslib.template","syslib.dom","syslib.event","syslib.util"],function(){
   __Template.preprocess.push(__UI.preprocess);
   __Template.postprocess.push(__UI.postprocess);
+  SYSLIB.settings.set('default_img_loading_ani',__Template.build(function(){/*
+    <div class="loading_ani_spinner_balls">
+      <div class="loading_ani_spinner_balls_dot1"></div>
+      <div class="loading_ani_spinner_balls_dot2"></div>
+    </div>
+  */}));
 });
 __UI.list={};
 SYSLIB.settings.set('ui_overwrite',false);
@@ -240,4 +245,31 @@ __UI.add('radio','standard',function(element){
   }
   element.addListener("enable",element.enable);
 })
-
+__UI.add('img','standard',function(element){
+  element.add("SYSUI_img_standard");
+  var picture=element.getAttr("src");
+  picture=(picture)?picture:"";
+  var loading_ani=element.innerHTML;
+  loading_ani=(loading_ani)?loading_ani:SYSLIB.settings.default_img_loading_ani;
+  element.innerHTML="";
+  var img_box=document.createElement('img');
+  img_box.className="img_box";
+  img_box.src=picture;
+  img_box.onload=function(){
+    cover_box.style.opacity=0;
+    setTimeout(function(){
+      cover_box.style.display="none";
+      setTimeout(function(){
+        img_box.style.display="block";
+        setTimeout(function(){
+          img_box.style.opacity=1;
+        },20)
+      },20)
+    },300)
+  }
+  var cover_box=document.createElement('div');
+  cover_box.className="cover_box";
+  cover_box.innerHTML=loading_ani;
+  element.appendChild(img_box);
+  element.appendChild(cover_box);
+})

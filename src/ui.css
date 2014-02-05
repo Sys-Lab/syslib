@@ -456,4 +456,80 @@
 .SYSUI_radio_standard .checks_box{
   border-radius: 20px;
 }
+
+/* img */
+.SYSUI_img_standard .img_box{
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  display: none;
+}
+.SYSUI_img_standard .cover_box{
+  width: 100%;
+  height: 70%;
+  padding-top: 30%;
+  background-color: #fff;
+  opacity: 1;
+  text-align: center;
+  border: solid 1px #DBDBDB;
+  border-radius: 5px;
+}
+.SYSUI_img_standard .img_box,.SYSUI_img_standard .cover_box{
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+
+/* loading ani */
+.loading_ani_spinner_balls {
+  margin: 20% auto;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  text-align: center;
+  
+  -webkit-animation: spinner-rotate 2.0s infinite linear;
+  animation: spinner-rotate 2.0s infinite linear;
+}
+
+.loading_ani_spinner_balls_dot1, .loading_ani_spinner_balls_dot2 {
+  width: 60%;
+  height: 60%;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  background-color: rgb(163,205,61);
+  border-radius: 100%;
+  
+  -webkit-animation: spinner-bounce 2.0s infinite ease-in-out;
+  animation: spinner-bounce 2.0s infinite ease-in-out;
+}
+
+.loading_ani_spinner_balls_dot2 {
+  top: auto;
+  bottom: 0px;
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+@-webkit-keyframes spinner-rotate { 100% { -webkit-transform: rotate(360deg) }}
+@keyframes spinner-rotate { 100% { transform: rotate(360deg); -webkit-transform: rotate(360deg) }}
+
+@-webkit-keyframes spinner-bounce {
+  0%, 100% { -webkit-transform: scale(0.0) }
+  50% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes spinner-bounce {
+  0%, 100% { 
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  } 50% { 
+    transform: scale(1.0);
+    -webkit-transform: scale(1.0);
+  }
+}
 /* ----- */
