@@ -34,7 +34,7 @@ SYSLIB={
 	    	__Error.log(0,"Namespace : all NS loaded");
 	    	for(var i in SYSLIB.namespaces_list){
 	    		if(SYSLIB.namespaces_list[i]!=1){
-					__Error.log(2,"Namespace : can't find required ns "+i)
+					__Error.log(2,"Namespace : can't find required ns "+i);
 					return;
 				}
 	    	}
@@ -95,9 +95,8 @@ SYSLIB={
 	    }
 	    SYSLIB.include_checklock=setTimeout(function(){
 	    	__Error.log(0,"INCLUDE : all file loaded");
-	        if(!SYSLIB.include_need&&$this.include_end_callback){
-	          SYSLIB.include_end_callback();
-	          SYSLIB.include_end_callback=0;
+	        if(!SYSLIB.include_need&&SYSLIB.include_end_callback){
+	          	SYSLIB.include_end_callback();
 	        }
 	    },500);
 	},
@@ -128,10 +127,11 @@ SYSLIB={
 				}else{
 					newnode.setAttribute("src",link);
 				}
-				$newnode.includeLink=$newnode
-				__Error.log(0,"INCLUDE : including "+$newnode);
+				newnode.includeLink=newnode;
+				__Error.log(0,"INCLUDE : including "+newnode);
+				SYSLIB.include_need++;
 				document.body.appendChild(newnode);
-				$newnode.onload=function(){
+				newnode.onload=function(){
 					__Error.log(0,"INCLUDE : included "+this.includeLink);
 			        SYSLIB.include_need--;
 			        SYSLIB.check_loadend();
@@ -823,7 +823,7 @@ __Event.Listen=function(event,listener,nopopup,level,element){
 			if(newlevel==LOWEST){
 				__Error.log(1,"Event : Event "+elementinfo+"."+event+"'s Listener with Level "+level+" is used. Using LOWEST level instead.");
 			}else{
-				__Error.log(1,"Event : Event "+elementinfo+"."+event+"'s Listener with Level "+level+" is used. Using "+newlevel+" level instead.")
+				__Error.log(1,"Event : Event "+elementinfo+"."+event+"'s Listener with Level "+level+" is used. Using "+newlevel+" level instead.");
 			}
 		}
 		
@@ -946,8 +946,8 @@ __Template.build=function (f,vals,insertTo) {
     rhtml = rhtml.replace(/\%\#([^\%]*)\%/g, function (match) {
   		var r = match.replace(/\%/g,'');
   		r = r.replace(/\#/g,'');
-  		if(r&&$__Template.SYS_LAN&&typeof($__Template.SYS_LAN[r])!== "undefined") {
-    		return $__Template.SYS_LAN[r];
+  		if(r&&__Template.SYS_LAN&&typeof(__Template.SYS_LAN[r])!== "undefined") {
+    		return __Template.SYS_LAN[r];
   		}else{
     		__Error.log(2,"Template : can't find "+r+" in Lan file . in "+f);
   		}
@@ -1332,7 +1332,7 @@ __Model.build = function (name,html,initfunc,attrs,father,formats) {
       	rebuild:function () {
             $this.statue = "";
             $this.laststatue = "";
-            $this.node.innerHTML = __Template.build($this.html,$this.formats);
+            __Template.build($this.html,$this.formats,$this.node);
             _Dom.freshdomcache();
             if($this.initfunc) {
               	$this.initfunc();

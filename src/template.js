@@ -30,8 +30,8 @@ __Template.build=function (f,vals,insertTo) {
     rhtml = rhtml.replace(/\%\#([^\%]*)\%/g, function (match) {
   		var r = match.replace(/\%/g,'');
   		r = r.replace(/\#/g,'');
-  		if(r&&$__Template.SYS_LAN&&typeof($__Template.SYS_LAN[r])!== "undefined") {
-    		return $__Template.SYS_LAN[r];
+  		if(r&&__Template.SYS_LAN&&typeof(__Template.SYS_LAN[r])!== "undefined") {
+    		return __Template.SYS_LAN[r];
   		}else{
     		__Error.log(2,"Template : can't find "+r+" in Lan file . in "+f);
   		}

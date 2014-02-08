@@ -90,7 +90,7 @@ __Event.Listen=function(event,listener,nopopup,level,element){
 			if(newlevel==LOWEST){
 				__Error.log(1,"Event : Event "+elementinfo+"."+event+"'s Listener with Level "+level+" is used. Using LOWEST level instead.");
 			}else{
-				__Error.log(1,"Event : Event "+elementinfo+"."+event+"'s Listener with Level "+level+" is used. Using "+newlevel+" level instead.")
+				__Error.log(1,"Event : Event "+elementinfo+"."+event+"'s Listener with Level "+level+" is used. Using "+newlevel+" level instead.");
 			}
 		}
 		

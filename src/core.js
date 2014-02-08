@@ -33,7 +33,7 @@ SYSLIB={
 	    	__Error.log(0,"Namespace : all NS loaded");
 	    	for(var i in SYSLIB.namespaces_list){
 	    		if(SYSLIB.namespaces_list[i]!=1){
-					__Error.log(2,"Namespace : can't find required ns "+i)
+					__Error.log(2,"Namespace : can't find required ns "+i);
 					return;
 				}
 	    	}
@@ -94,9 +94,8 @@ SYSLIB={
 	    }
 	    SYSLIB.include_checklock=setTimeout(function(){
 	    	__Error.log(0,"INCLUDE : all file loaded");
-	        if(!SYSLIB.include_need&&$this.include_end_callback){
-	          SYSLIB.include_end_callback();
-	          SYSLIB.include_end_callback=0;
+	        if(!SYSLIB.include_need&&SYSLIB.include_end_callback){
+	          	SYSLIB.include_end_callback();
 	        }
 	    },500);
 	},
@@ -127,10 +126,11 @@ SYSLIB={
 				}else{
 					newnode.setAttribute("src",link);
 				}
-				$newnode.includeLink=$newnode
-				__Error.log(0,"INCLUDE : including "+$newnode);
+				newnode.includeLink=newnode;
+				__Error.log(0,"INCLUDE : including "+newnode);
+				SYSLIB.include_need++;
 				document.body.appendChild(newnode);
-				$newnode.onload=function(){
+				newnode.onload=function(){
 					__Error.log(0,"INCLUDE : included "+this.includeLink);
 			        SYSLIB.include_need--;
 			        SYSLIB.check_loadend();

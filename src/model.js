@@ -66,7 +66,7 @@ __Model.build = function (name,html,initfunc,attrs,father,formats) {
       	rebuild:function () {
             $this.statue = "";
             $this.laststatue = "";
-            $this.node.innerHTML = __Template.build($this.html,$this.formats);
+            __Template.build($this.html,$this.formats,$this.node);
             _Dom.freshdomcache();
             if($this.initfunc) {
               	$this.initfunc();

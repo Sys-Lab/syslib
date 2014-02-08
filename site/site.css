@@ -1,0 +1,272 @@
+body{
+  color:rgb(136, 168, 59);
+  font-family: "Microsoft YaHei","Hiragino Sans GB W3","WenQuanYi Micro Hei";
+  overflow-x: hidden;
+}
+#Build_with_nodeJs ,#error_notice,#only_Build_with_node{
+  -webkit-transition:all .3s ease-in-out;
+  -moz-transition:all .3s ease-in-out;
+  -ms-transition:all .3s ease-in-out;
+  -o-transition:all .3s ease-in-out;
+  transition:all .3s ease-in-out;
+}
+#sys_main_playground{
+  position: absolute;
+  top:0px;
+  left:0px;
+  right:0px;
+  bottom: 0px;
+}
+#logo{
+  width: 100%;
+  height: 300px;
+  background-color: rgb(200, 223, 144);
+  color:#fff;
+  text-align: center;
+}
+#logo div{
+  font-size: 24px;
+}
+#github {
+  position: absolute;
+  right: -40px;
+  top: -20px;
+  width: 120px;
+  text-align: center;
+  padding: 30px 10px 10px 20px;
+  background: rgb(180, 206, 117);
+  -webkit-transform: rotate(30deg);
+  -moz-transform: rotate(30deg);
+  -ms-transform: rotate(30deg);
+  -o-transform: rotate(30deg);
+  transform: rotate(30deg);
+  color:rgb(136, 168, 59);
+  text-decoration: none;
+  display: block;
+}
+#github:link,#github:hover,#github:visited{
+  color:rgb(136, 168, 59);
+}
+#github:hover{
+  opacity: 0.8;
+}
+#applogo{
+  position: absolute;
+  color: #fff;
+  border: solid 2px;
+  padding: 5px 10px;
+  background: rgb(195, 224, 125);
+  -webkit-transform: rotate(-15deg);
+  -moz-transform: rotate(-15deg);
+  -ms-transform: rotate(-15deg);
+  -o-transform: rotate(-15deg);
+  transform: rotate(-15deg);
+}
+#not_doneyet{
+  text-align: center;
+  padding: 25px 0;
+  font-size: 22px;
+  background-color: rgb(215, 235, 169);
+}
+#dowloadbtn{
+  background-color: rgb(136, 168, 59);
+  display: inline-block;
+  color: #fff;
+  padding: 15px 25px;
+  font-size: 24px;
+  border-radius: 5px;
+  float: right;
+  position: absolute;
+  cursor: pointer;
+  right: 30px;
+}
+#features{
+  text-align: center;
+  margin:20px 0; 
+}
+#features > div{
+  text-align: left;
+  width: 30%;
+  display: inline-block;
+  height: 165px;
+  overflow: hidden;
+  padding: 20px 5%;
+}
+#features_0{
+  position: relative;
+  top: 60px;
+}
+#features_0 li{
+  list-style: none;
+  text-align: center;
+}
+#features_1{
+  border-left: solid 1px;
+}
+#pre_build {
+  text-align: center;
+  padding: 40px 20px 20px 20px;
+  background: rgb(219, 231, 190);
+  font-size: 24px;
+}
+.ver_small{
+  font-size: 14px;
+}
+.dl_des {
+  font-size: 14px;
+}
+#pre_build a,#pre_build a:link,#pre_build a:hover,#pre_build a:visited{
+  color: #fff;
+  background: rgb(167, 199, 86);
+  text-decoration: none;
+  display: inline-block;
+  padding: 5px 10px;
+  margin: 20px;
+  width: 200px;
+}
+#pre_build a:hover{
+  background: rgb(135, 170, 46);
+}
+#Builders {
+  background-color: rgb(201, 224, 143);
+  padding: 50px 20px;
+}
+#Buildonbr{
+  font-size: 36px;
+  border-bottom: solid 1px;
+  padding: 5px;
+}
+#Buildwithnode{
+  position: relative;
+  top: -35px;
+  font-size: 24px;
+  cursor: pointer;
+}
+#Builder_notice{
+  margin-left: 10px;
+}
+#components {
+  padding: 5px;
+  margin: 20px 5px 0 5px;
+  width: 45%;
+  background: #fff;
+  height: 200px;
+  border-radius: 5px;
+  display: inline-block;
+}
+#components div:hover,.selected{
+  background: rgb(136, 168, 59);
+  color:#fff;
+}
+#components div {
+  padding: 5px 10px;
+  display: inline-block;
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 10px;
+  border:dashed 1px;
+}
+#components_des {
+  padding: 20px;
+  margin: 20px 5px;
+  width: 45%;
+  background: #fff;
+  height: 270px;
+  border-radius: 5px;
+  float: right;
+  display: inline-block;
+}
+#components_des_name {
+  font-size: 24px;
+  border-bottom: solid 1px;
+}
+#components_des_dep {
+  margin: 20px 5px;
+}
+#components_des_des {
+  margin: 5px;
+}
+#components_des_features {
+  padding: 5px;
+  margin-top: 20px;
+}
+#components_des_features_title {
+  border-bottom: dashed 1px;
+  padding: 2px;
+}
+#components_des_features_inner{
+  padding: 10px;
+}
+#components_go {
+  float: left;
+  left: 40%;
+  position: relative;
+  background: rgb(136, 168, 59);
+  padding: 10px 30px;
+  top: -30px;
+  color: #fff;
+  font-size: 24px;
+  border-radius: 5px;
+  cursor: pointer;
+  -webkit-transform: rotate(-15deg);
+  -moz-transform: rotate(-15deg);
+  -ms-transform: rotate(-15deg);
+  -o-transform: rotate(-15deg);
+  transform: rotate(-15deg);
+}
+#components_go:hover,#dowloadbtn:hover{
+  opacity: 0.8;
+}
+.code {
+  padding: 10px;
+  background: rgb(99, 119, 50);
+  margin: 5px;
+  border-radius: 5px;
+  color: #fff;
+}
+#Build_with_nodeJs {
+  position: absolute;
+  right: 40px;
+  background: rgb(143, 170, 75);
+  padding: 20px;
+  color: #fff;
+  display: none;
+  opacity: 0;
+}
+#only_Build_with_node {
+  position: absolute;
+  display: none;
+  opacity: 0;
+  top: 1040px;
+  left: 20px;
+  right: 20px;
+  background-color: rgba(0,0,0,0.85);
+  height: 230px;
+  padding: 20px;
+  border-radius: 5px;
+  border: solid 1px rgb(136, 168, 59);
+  box-shadow: 0 0 20px 0 rgb(136, 168, 59) inset;
+}
+#footer {
+  text-align: center;
+  background: rgb(164, 192, 92);
+  padding: 20px;
+  color: #fff;
+}
+#error_notice{
+  height: 0px;
+  overflow: hidden;
+  background-color: rgb(233, 156, 105);
+  font-size: 18px;
+  padding: 0 10px;
+  text-align: center;
+  color: #fff;
+}
+.error_notice_show{
+  height: 40px !important;
+  padding: 10px !important;
+}
+a,a:link,a:hover,a:visited{
+  color: #fff;
+  text-decoration: none;
+}

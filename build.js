@@ -32,6 +32,10 @@ if((!argv)||argv.help){
 	console.log("");
 	console.log("Options:");
 	console.log("\t--compress\t\tcompress with uglyfy");
+	console.log("\t--no_notice\t\tremove debug notice in code for smaller file size");
+	console.log("\t--no_warning\t\tremove warning,debug notice in code.");
+	console.log("\t--no_error\t\tremove error,warning,debug notice in code.");
+	console.log("\t--compress\t\tcompress with uglyfy");
 	console.log("");
 	console.log("\t--full\t\tbuild all compoments [ Big ] [no socket]");
 	console.log("\t--core\t\tinclude Core only");
@@ -180,7 +184,7 @@ if((!argv)||argv.help){
 			return;
 		}
 		var nowfile=toloadlist.shift(),
-			data=readfile("src/"+nowfile+".js").replace(/^\ufeff/i, "").replace(/^\ufffe/i, "");;
+			data=readfile("src/"+nowfile+".js").replace(/^\ufeff/i, "").replace(/^\ufffe/i, "");
 		clcnotice("Building :"+nowfile.toUpperCase());
 		if(data){
 			var tmp=data.match(/REQUIRE\:([\s\S]*?)\r\n/);
@@ -192,6 +196,16 @@ if((!argv)||argv.help){
 						toloadlist.push(tmp2);
 					}
 				}
+			}
+			if(argv.no_error){
+				data=data.replace(/\_\_Error\.log\(2\,[\s\S]*?\)\;/g,"");
+			}
+			if(argv.no_error||argv.no_warning){
+				data=data.replace(/\_\_Error\.log\(1\,[\s\S]*?\)\;/g,"");
+			}
+			if(argv.no_error||argv.no_warning||argv.no_notice){
+				data=data.replace(/\_\_Error\.log\(0\,[\s\S]*?\)\;/g,"");
+
 			}
 			builddata=builddata+"\n"+data;
 			build();
