@@ -124,6 +124,9 @@ __Event.unListen=function(event,listener,nopopup,level,element,all){
 }
 SYSLIB.settings.set('event_safe',true);
 __Event.clear=function(element){
+	/*
+		todo: autoclear listener when del element
+	*/
 	if(!element){
 		element=__Event.global;
 	}

@@ -857,6 +857,9 @@ __Event.unListen=function(event,listener,nopopup,level,element,all){
 }
 SYSLIB.settings.set('event_safe',true);
 __Event.clear=function(element){
+	/*
+		todo: autoclear listener when del element
+	*/
 	if(!element){
 		element=__Event.global;
 	}
@@ -1333,7 +1336,7 @@ __Model.build = function (name,html,initfunc,attrs,father,formats) {
             $this.statue = "";
             $this.laststatue = "";
             __Template.build($this.html,$this.formats,$this.node);
-            _Dom.freshdomcache();
+            __Dom.fresh();
             if($this.initfunc) {
               	$this.initfunc();
             }
