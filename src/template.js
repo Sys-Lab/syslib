@@ -69,6 +69,7 @@ __Template.build=function (f,vals,insertTo) {
       }
     }
     setTimeout(func,50);
+    __Error.log(0,"Template : build html : "+rhtml);
   	return rhtml;
 }
 //short cuts

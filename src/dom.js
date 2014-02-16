@@ -26,7 +26,7 @@ __Dom.nodeparser=function(node){
 	node.find=function(ipt){
 		return __Dom.find(ipt,this);
 	}
-	node.search=function(ipt){
+	node.searchdom=function(ipt){
 		return __Dom.search(ipt,this);
 	}
 	node.searchcontent=function(ipt){
