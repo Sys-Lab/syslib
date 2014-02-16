@@ -978,13 +978,16 @@ __Template.build=function (f,vals,insertTo) {
       }
     }
     if(insertTo){
-      insertTo.innerHTML=rhtml;
+        insertTo.innerHTML=rhtml;
+    }
+    var func=function(){
       if(__Template.postprocess){
         for(var i=0;i<__Template.postprocess.length;i++){
           __Template.postprocess[i](insertTo);
         }
       }
     }
+    setTimeout(func,50);
   	return rhtml;
 }
 //short cuts
