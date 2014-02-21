@@ -20,7 +20,18 @@ window.nsloaded=function(){
 		<div>Div test  test  test</div>
 		<ui:img src="http://1.node.marliang.com/assert/media/header.jpg" style="width:200px;height:300px"></ui>
 		<ui:btn>test UI botton</ui>
-		<ui:btn type="standard">test UI botton</ui>
+		<ui:btn type="standard" id="btn0" disabled="true">test UI botton</ui>
+		<ui:select id="test_select_1" default="test UI select 1">
+			<li value="0">select 0</li>
+			<li value="1">select 1</li>
+			<li value="2">select 2</li>
+			<li value="3">select 3</li>
+		</ui>
+		<ui:select id="test_select_2" default="test UI select 2" disabled="true"></ui>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
 		<ui:checkbox class="blue">test UI Checkbox</ui>
 		<ui:checkbox checked="true">test UI Checkbox checked</ui>
 		<ui:checkbox checked_text="i'm checked">test UI Checkbox checked_text</ui>
@@ -29,9 +40,28 @@ window.nsloaded=function(){
 		<ui:radio group="testgroup" value="1" class="lime">test UI Radio 2</ui>
 		<ui:radio group="testgroup" checked_text="i'm checked" value="2">test UI Radio 3</ui>
 		<ui:radio group="testgroup2">test UI Radio 1 group2</ui>
-	*/},['1','2','3'],_f("#sys_main_playground"));
+	*/},['1','2','3'],_f("#sys_main_playground"),function(){
+		_f("#test_select_1").addListener("change",function(e){
+			console.log(e);
+			if(e.value==2){
+				_f("#test_select_2").enable();
+				_f("#test_select_2").parseOptions([
+					{
+						text:'test 01',
+						value:1
+					},{
+						text:'test 02',
+						value:2
+					}
+				])
+			}else{
+				_f("#test_select_2").disable();
+			}
+		})
+	});
 	setTimeout(function(){
 		_f("#iio").enable();
+		_f("#btn0").enable();
 	},5000)
 	_listen("radio-testgroup-change",function(e){
 		console.log(e);

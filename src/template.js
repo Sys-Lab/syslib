@@ -11,7 +11,7 @@ __Template.SYS_LAN={};
 //
 __Template.preprocess=[];
 __Template.postprocess=[];
-__Template.build=function (f,vals,insertTo) {
+__Template.build=function (f,vals,insertTo,callback) {
     //get strings
     var rhtml = f.toString().replace(/^[^\/]+\/\*!?\s?/, '').replace(/\*\/[^\/]+$/, '');
 
@@ -66,6 +66,9 @@ __Template.build=function (f,vals,insertTo) {
         for(var i=0;i<__Template.postprocess.length;i++){
           __Template.postprocess[i](insertTo);
         }
+      }
+      if(callback){
+        callback();
       }
     }
     setTimeout(func,50);

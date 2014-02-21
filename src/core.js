@@ -4,7 +4,7 @@
 // NEED:NONE
 //
 SYSLIB={
-	ver:0,
+	ver:'0.1.0',
 	 //settings
     settings:{
     	release:0,

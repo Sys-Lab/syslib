@@ -74,6 +74,23 @@ __UI.postprocess=function(element){
 }
 __UI.add('btn','standard',function(element){
   element.add("SYSUI_btn_standard");
+  var disabled=element.getAttr("disabled");
+  disabled=(disabled&&disabled!="false")?true:false;
+  if(disabled){
+    element.add("btn_disabled");
+  }
+  element.disable=function(){
+    this.disabled=true;
+    this.setAttr("disabled",true);
+    this.add("btn_disabled");
+  }
+  element.addListener("disable",element.disable);
+  element.enable=function(){
+    this.disabled=false;
+    this.setAttr("disabled",false);
+    this.remove("btn_disabled");
+  }
+  element.addListener("enable",element.enable);
 })
 __UI.add('checkbox','standard',function(element){
   element.add("SYSUI_checkbox_standard");
@@ -272,4 +289,130 @@ __UI.add('img','standard',function(element){
   cover_box.innerHTML=loading_ani;
   element.appendChild(img_box);
   element.appendChild(cover_box);
+})
+__UI.add('select','standard',function(element){
+  element.add("SYSUI_select_standard");
+  var disabled=element.getAttr("disabled");
+  disabled=(disabled&&disabled!="false")?true:false;
+  element.disabled=disabled;
+  var value=element.getAttr("value");
+  value=(value)?value:0;
+  var icolor=element.getAttr("icolor");
+  icolor=(icolor)?icolor:'#a3cd3d';
+  var default_t=element.getAttr("default");
+  default_t=(default_t)?default_t:'-';
+
+  var select_top=document.createElement('div');
+  select_top.className="select_top";
+  var select_box=document.createElement('div');
+  select_box.className="select_box";
+  var select_bar=document.createElement('div');
+  select_bar.className="select_bar";
+
+  var select_text=document.createElement('div');
+  select_text.className="select_text";
+  var select_icon=document.createElement('span');
+  select_icon.className="select_icon";
+
+
+  select_icon.icon_down='<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="11" height="12" viewBox="0 0 11 12"><g></g><path d="M10.788 4.714q0 0.355-0.248 0.603l-4.359 4.359q-0.254 0.254-0.609 0.254-0.362 0-0.603-0.254l-4.359-4.359q-0.254-0.241-0.254-0.603 0-0.355 0.254-0.609l0.496-0.502q0.261-0.248 0.609-0.248 0.355 0 0.603 0.248l3.254 3.254 3.254-3.254q0.248-0.248 0.603-0.248 0.348 0 0.609 0.248l0.502 0.502q0.248 0.261 0.248 0.609z" fill="'+icolor+'" /></svg>'
+  select_icon.icon_up='<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="11" height="12" viewBox="0 0 11 12"><g></g><path d="M10.788 8.143q0 0.355-0.248 0.603l-0.502 0.502q-0.254 0.254-0.609 0.254-0.362 0-0.603-0.254l-3.254-3.248-3.254 3.248q-0.241 0.254-0.603 0.254t-0.603-0.254l-0.502-0.502q-0.254-0.241-0.254-0.603 0-0.355 0.254-0.609l4.359-4.359q0.248-0.248 0.603-0.248 0.348 0 0.609 0.248l4.353 4.359q0.254 0.254 0.254 0.609z" fill="'+icolor+'" /></svg>';
+  
+  select_icon.innerHTML=select_icon.icon_down;
+
+  select_text.innerHTML=default_t;
+  if(disabled){
+    element.add("select_disabled");
+  }
+
+  var dlist=[],
+      childs=element.childNodes;
+  for(var i=0;i<childs.length;i++){
+    if(childs[i].tagName){
+      var value=childs[i].value;
+      value=(value)?value:childs[i].innerHTML;
+      dlist.push({
+        text:childs[i].innerHTML,
+        value:value
+      });
+    }
+  }
+  element.innerHTML="";
+  element.appendChild(select_top);
+  element.appendChild(select_box);
+  element.appendChild(select_bar);
+  select_top.appendChild(select_text);
+  select_top.appendChild(select_icon);
+  var fixlock=0;
+  element.addListener("click",function(){
+    if(this.disabled||fixlock){
+      fixlock=0;
+      return;
+    }
+    if(_c(select_box).has("open")){
+      _c(select_box).remove("open");
+      select_icon.innerHTML=select_icon.icon_down;
+      setTimeout(function(){
+        select_box.style.display="none";
+      },200)
+    }else{
+      select_box.style.top=(element.offsetTop+34)+"px";
+      select_box.style.left=(element.offsetLeft+7)+"px";
+      select_box.style.width=(element.offsetWidth-16)+"px";
+      select_box.style.display="block";
+      setTimeout(function(){
+        _c(select_box).add("open");
+      },50)
+      select_icon.innerHTML=select_icon.icon_up;
+    }
+  })
+  element.parseOptions=function(list){
+    element.optionList=list;
+    select_box.innerHTML="";
+    for(var i=0;i<element.optionList.length;i++){
+      element.addOption(element.optionList[i]);
+    }
+  }
+  element.addOption=function(data){
+    var onode=__Dom.nodeparser(document.createElement('div'));
+    onode.value=data.value;
+    onode.innerHTML=data.text;
+    select_box.appendChild(onode);
+    onode.addListener("click",element.selectOption)
+  }
+  element.removeOption=function(num){
+    var node=select_box.childNodes[num];
+    if(node&&node.tagName){
+      select_box.removeChild(node);
+    }
+  }
+  element.selectOption=function(){
+    var value=this.value,
+        text=this.innerHTML;
+    fixlock=1;
+    select_text.style.minWidth=select_text.offsetWidth+"px";
+    select_text.innerHTML=text;
+    element.value=value;
+    __Event.emit("change",{
+      value:value
+    },element);
+    _c(select_box).remove("open");
+    select_icon.innerHTML=select_icon.icon_down;
+    setTimeout(function(){
+      select_box.style.display="none";
+    },200)
+  }
+  element.disable=function(){
+    this.disabled=true;
+    this.setAttr("disabled",true);
+    this.add("select_disabled");
+  }
+  element.addListener("disable",element.disable);
+  element.enable=function(){
+    this.disabled=false;
+    this.setAttr("disabled",false);
+    this.remove("select_disabled");
+  }
+  element.parseOptions(dlist);
+  element.addListener("enable",element.enable);
 })
