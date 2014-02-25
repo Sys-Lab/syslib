@@ -1,0 +1,32 @@
+﻿.SYSUI_addrinput_standard{
+	margin: 5px;
+	width: 400px;
+}
+.addrinput_input {
+	color:#a3cd3d;
+	border: solid 2px;
+	border-radius: 5px;
+	font-size: 18px;
+	padding: 5px 10px;
+	width:100%;
+	outline: none;
+}
+.addrinput_selectbox{
+	position: absolute;
+	display: none;
+	border: solid 1px;
+	border-radius: 0 0 10px 10px;
+	color:#a3cd3d;
+}
+.addrinput_selectbox div {
+	cursor: pointer;
+	padding: 10px;
+}
+.addrinput_selectbox span {
+	padding: 10px;
+	display: block;
+}
+.addrinput_selectbox div:hover {
+  	color:#fff;
+  	background-color: #a3cd3d;
+}
