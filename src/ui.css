@@ -144,6 +144,7 @@
   border-style: solid;
   display: inline-block;
   padding: 8px 15px;
+  text-align: center;
   border-radius: 30px;
   cursor: pointer;
   border-color:#a3cd3d;
@@ -506,6 +507,7 @@
   border: solid 1px;
   border-radius: 0 0 10px 10px;
   overflow: hidden;
+  background: #fff;
   -webkit-transition: all 0.2s ease-in-out;
   -moz-transition: all 0.2s ease-in-out;
   -ms-transition: all 0.2s ease-in-out;

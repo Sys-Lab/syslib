@@ -329,7 +329,7 @@ __UI.add('select','standard',function(element){
       childs=element.childNodes;
   for(var i=0;i<childs.length;i++){
     if(childs[i].tagName){
-      var value=childs[i].value;
+      var value=childs[i].getAttribute('value');
       value=(value)?value:childs[i].innerHTML;
       dlist.push({
         text:childs[i].innerHTML,

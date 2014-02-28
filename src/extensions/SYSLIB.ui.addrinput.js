@@ -12,12 +12,25 @@ __UI.add('addrinput','standard',function(element){
   element.innerHTML="";
   element.appendChild(inputbox);
   element.appendChild(selectbox);
+  element.getvalue=function(){
+    return inputbox.value;;
+  }
   var plock=0,mlock=0;
   inputbox.addListener("keyup",function(e){
   	if(plock){
   		clearTimeout(plock);
   	}
-  	plock=setTimeout(parseselect,200)
+  	plock=setTimeout(parseselect,200);
+    __Event.emit("keyup",{
+        element:element,
+        event:e
+    },element)
+  });
+  inputbox.addListener("blur",function(e){
+    __Event.emit("blur",{
+        element:element,
+        event:e
+    },element)
   });
   var parseselect=function(){
   	if(mlock&&((inputbox.value).indexOf(mlock)!=-1)){
@@ -45,6 +58,12 @@ __UI.add('addrinput','standard',function(element){
   			selectbox.appendChild(newnode);
   			selectbox.tdata=SYSLIB_UI_alladdress[i];
   			newnode.addListener("click",function(){
+          __Event.emit("choose",{
+              element:element,
+              addrcode:this.codeid,
+              addrstr:this.innerHTML
+          },element)
+          inputbox.focus();
   				selectbox.innerHTML="";
   				selectbox.style.display="none";
 			  	inputbox.value=this.innerHTML;

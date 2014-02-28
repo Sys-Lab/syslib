@@ -68,7 +68,7 @@ __Template.build=function (f,vals,insertTo,callback) {
         }
       }
       if(callback){
-        callback();
+        setTimeout(callback,50);
       }
     }
     setTimeout(func,50);
