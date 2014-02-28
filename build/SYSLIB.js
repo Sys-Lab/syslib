@@ -5,7 +5,7 @@
 // NEED:NONE
 //
 SYSLIB={
-	ver:0,
+	ver:'0.1.0',
 	 //settings
     settings:{
     	release:0,
@@ -1068,7 +1068,7 @@ __UI.postprocess=function(element){
     if(__UI.list[data.gtype]&&__UI.list[data.gtype][data.type]){
       __UI.list[data.gtype][data.type](processElement);
     }else{
-       __Error.log(2,"UI : can't process  element:"+data.id+" ! ui type: "+gtype+"."+type+" no found !");
+       __Error.log(2,"UI : can't process  element:"+data.id+" ! ui type: "+data.gtype+"."+data.type+" no found !");
     }
   }
 }
