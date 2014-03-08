@@ -126,8 +126,8 @@ SYSLIB={
 				}else{
 					newnode.setAttribute("src",link);
 				}
-				newnode.includeLink=newnode;
-				__Error.log(0,"INCLUDE : including "+newnode);
+				newnode.includeLink=link;
+				__Error.log(0,"INCLUDE : including "+newnode.includeLink);
 				SYSLIB.include_need++;
 				document.body.appendChild(newnode);
 				newnode.onload=function(){
@@ -169,7 +169,12 @@ __Error.log=function(type,text){  // type = Notice Warn Error
 		text:type
 	}
 	if(!SYSLIB.settings['loglevel']||SYSLIB.settings['loglevel']<type){
-		return console.log("%c"+(["Notice: ","Warn: ","Error: "])[type],(["color:#5353E5","color:#F7620E","color:#F81325"])[type]),console.log("%c"+text,(["background:#AED8FA","background:#FCCEB4","background:#F199A0"])[type]);
+		if(window.chrome){
+			console.log("%c"+(["Notice: ","Warn: ","Error: "])[type],(["color:#5353E5","color:#F7620E","color:#F81325"])[type]),console.log("%c"+text,(["background:#AED8FA","background:#FCCEB4","background:#F199A0"])[type]);
+		}else{
+			console.log((["Notice: ","Warn: ","Error: "])[type]+text);
+		}
+		return;
 	}
 }
 window.onerror  =  function(errorMessage, errorUrl, errorLine){

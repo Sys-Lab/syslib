@@ -28,15 +28,15 @@ __Model.add("main",function(){
 			</div>
 		</div>
 		<div id="pre_build">
-			<div>Download Pre-Build Compressed Packs <span class="ver_small">Build 2014022805</span></div>
+			<div>Download Pre-Build Compressed Packs <span class="ver_small">Build 2014030801</span></div>
 			<div id="pre_build_dl">
 				<a target="_blank" href="dl/full/SYSLIB.min.js">
 					<div>Full</div>
-					<div class="dl_des">With everything ! ( 53 KB )</div>
+					<div class="dl_des">With everything ! ( 45 KB )</div>
 				</a>
 				<a target="_blank" href="dl/standard/SYSLIB.min.js">
 					<div>Standard</div>
-					<div class="dl_des">Model inside !( 20 KB )</div>
+					<div class="dl_des">Model inside !( 21 KB )</div>
 				</a>
 				<a target="_blank" href="dl/mini/SYSLIB.min.js">
 					<div>Mini</div>
@@ -93,7 +93,7 @@ __Model.add("main",function(){
 		},file:{
 			dependencies:['core'],
 			des:"Basic Html5 File API support.",
-			features:"Read Write comes simple"
+			features:"Read Write comes simple, need rewrite.temp removed from full pack."
 		},geo:{
 			dependencies:['core'],
 			des:"get Geolocation with Html5 API and fallback with Baidu.",

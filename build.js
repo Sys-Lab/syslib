@@ -83,7 +83,7 @@ if((!argv)||argv.help){
 	var noneargv=0;
 	if(argv.full){
 		for(var i in buildlist){
-			if(i!="socket"){
+			if(i!="socket"&&i!="file"){
 				buildlist[i]=1;
 			}
 		}
@@ -166,7 +166,7 @@ if((!argv)||argv.help){
 	}
 	if(!noneargv){
 		for(var i in buildlist){
-			if(i!="socket"){
+			if(i!="socket"&&i!="file"){
 				buildlist[i]=1;
 			}
 		}

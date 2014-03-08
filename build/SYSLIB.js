@@ -127,7 +127,7 @@ SYSLIB={
 				}else{
 					newnode.setAttribute("src",link);
 				}
-				newnode.includeLink=newnode;
+				newnode.includeLink=link;
 				
 				SYSLIB.include_need++;
 				document.body.appendChild(newnode);
@@ -170,7 +170,12 @@ __Error.log=function(type,text){  // type = Notice Warn Error
 		text:type
 	}
 	if(!SYSLIB.settings['loglevel']||SYSLIB.settings['loglevel']<type){
-		return console.log("%c"+(["Notice: ","Warn: ","Error: "])[type],(["color:#5353E5","color:#F7620E","color:#F81325"])[type]),console.log("%c"+text,(["background:#AED8FA","background:#FCCEB4","background:#F199A0"])[type]);
+		if(window.chrome){
+			console.log("%c"+(["Notice: ","Warn: ","Error: "])[type],(["color:#5353E5","color:#F7620E","color:#F81325"])[type]),console.log("%c"+text,(["background:#AED8FA","background:#FCCEB4","background:#F199A0"])[type]);
+		}else{
+			console.log((["Notice: ","Warn: ","Error: "])[type]+text);
+		}
+		return;
 	}
 }
 window.onerror  =  function(errorMessage, errorUrl, errorLine){
@@ -999,6 +1004,425 @@ var _template = SYSLIB.namespace("syslib.template").build;
 var _lang=function(name){SYSLIB.namespace("syslib.template").SYS_LAN[name];};
 
 //
+// NS:UI
+// REQUIRE:CORE,TEMPLATE,DOM,EVENT,UTIL
+// NEED:NONE
+//
+
+//
+// Basic UI require ui.css
+//
+
+__UI=SYSLIB.namespace("syslib.ui",["syslib.template","syslib.dom","syslib.event","syslib.util"],function(){
+  __Template.preprocess.push(__UI.preprocess);
+  __Template.postprocess.push(__UI.postprocess);
+  SYSLIB.settings.set('default_img_loading_ani',__Template.build(function(){/*
+    <div class="loading_ani_spinner_balls">
+      <div class="loading_ani_spinner_balls_dot1"></div>
+      <div class="loading_ani_spinner_balls_dot2"></div>
+    </div>
+  */}));
+});
+__UI.list={};
+SYSLIB.settings.set('ui_overwrite',false);
+__UI.add=function(gtype,type,processfunction){
+  if(!__UI.list[gtype]){
+    __UI.list[gtype]={}
+  }
+  if(__UI.list[gtype][type]&&!SYSLIB.settings.ui_overwrite){
+    
+    return;
+  }
+  __UI.list[gtype][type]=processfunction;
+}
+__UI.tmplist=[];
+__UI.preprocess=function(html){
+  html=html.replace(/<ui:([a-zA-Z0-9\_\-]*)([^>]*)>/g, function (match,gtype,attrs) {
+      var id=__Util.token(),
+          type=0,
+          orgid=0;
+      if(attrs){
+        var attr=attrs.match(/type=[\'\"]([\s\S]*?)[\'\"]/);
+        if(attr){
+          type=attr[1];
+        }
+        attr=attrs.match(/id=[\'\"]([\s\S]*?)[\'\"]/);
+        if(attr){
+          orgid=attr[1];
+        }
+      }
+      __UI.tmplist.push({
+        id:id,
+        orgid:orgid,
+        gtype:gtype,
+        type:(type)?type:'standard'
+      })
+      return "<div id='"+id+"'"+attrs+">";
+  });
+  html=html.replace(/<\/ui>/g,"</div>");
+  return html;
+}
+//if not using .insertTo(element) with __Template(f,vals) you must call this manualy
+__UI.postprocess=function(element){
+  while(__UI.tmplist.length){
+    var data=__UI.tmplist.pop();
+    var processElement=_f("#"+data.id);
+    if(data.orgid){
+      processElement.id=data.orgid;
+    }
+    if(__UI.list[data.gtype]&&__UI.list[data.gtype][data.type]){
+      __UI.list[data.gtype][data.type](processElement);
+    }else{
+       __Error.log(2,"UI : can't process  element:"+data.id+" ! ui type: "+data.gtype+"."+data.type+" no found !");
+    }
+  }
+}
+__UI.add('btn','standard',function(element){
+  element.add("SYSUI_btn_standard");
+  var disabled=element.getAttr("disabled");
+  disabled=(disabled&&disabled!="false")?true:false;
+  if(disabled){
+    element.add("btn_disabled");
+  }
+  element.disable=function(){
+    this.disabled=true;
+    this.setAttr("disabled",true);
+    this.add("btn_disabled");
+  }
+  element.addListener("disable",element.disable);
+  element.enable=function(){
+    this.disabled=false;
+    this.setAttr("disabled",false);
+    this.remove("btn_disabled");
+  }
+  element.addListener("enable",element.enable);
+})
+__UI.add('checkbox','standard',function(element){
+  element.add("SYSUI_checkbox_standard");
+  var checked=element.getAttr("checked");
+  checked=(checked&&checked!="false")?true:false;
+  var disabled=element.getAttr("disabled");
+  disabled=(disabled&&disabled!="false")?true:false;
+  element.disabled=disabled;
+  element.checked=checked;
+  var checks_box=document.createElement('div');
+  checks_box.className="checks_box";
+  var checks_text=document.createElement('div');
+  checks_text.className="checks_text";
+  var texts={
+    normal:element.innerHTML,
+    checked:(element.getAttr("checked_text"))?element.getAttr("checked_text"):element.innerHTML,
+    disabled:(element.getAttr("disabled_text"))?element.getAttr("disabled_text"):0
+  }
+  element.texts=texts;
+  if(checked){
+    checks_text.innerHTML=texts.checked;
+    element.add("checks_checked");
+  }else{
+    checks_text.innerHTML=texts.normal;
+  }
+  if(disabled){
+    if(texts.disabled){
+      checks_text.innerHTML=texts.disabled;
+    }
+    element.add("checks_disabled");
+  }
+  element.innerHTML="";
+  element.appendChild(checks_box);
+  element.appendChild(checks_text);
+  element.addListener("click",function(){
+    if(this.disabled){
+      return;
+    }
+    if(this.checked){
+      this.checked=false;
+      this.setAttr("checked",false);
+      this.remove("checks_checked");
+      checks_text.innerHTML=this.texts.normal;
+      __Event.emit("unchecked",{
+        element:this
+      },this)
+    }else{
+      this.checked=true;
+      this.setAttr("checked",true);
+      this.add("checks_checked");
+      checks_text.innerHTML=this.texts.checked;
+      __Event.emit("checked",{
+        element:this
+      },this)
+    }
+  })
+  element.disable=function(){
+    this.disabled=true;
+    this.setAttr("disabled",true);
+    this.add("checks_disabled");
+    this.orgtext=this.innerHTML;
+    if(this.texts.disabled){
+      checks_text.innerHTML=this.texts.disabled;
+    }
+  }
+  element.addListener("disable",element.disable);
+  element.enable=function(){
+    this.disabled=false;
+    this.setAttr("disabled",false);
+    this.remove("checks_disabled");
+    if(this.orgtext){
+      checks_text.innerHTML=this.orgtext;
+    }
+  }
+  element.addListener("enable",element.enable);
+})
+__UI_radiolist={}
+__UI.add('radio','standard',function(element){
+  element.add("SYSUI_radio_standard");
+  var checked=element.getAttr("checked");
+  checked=(checked&&checked!="false")?true:false;
+  var disabled=element.getAttr("disabled");
+  disabled=(disabled&&disabled!="false")?true:false;
+  var group=element.getAttr("group");
+  group=(group)?group:0;
+  var value=element.getAttr("value");
+  value=(value)?value:0;
+  element.value=value;
+  element.group=group;
+  if(group){
+    if(!__UI_radiolist[group]){
+      __UI_radiolist[group]={
+        value:0,
+        list:[]
+      };
+    }
+    __UI_radiolist[group].list.push(element);
+  }
+  element.disabled=disabled;
+  element.checked=checked;
+  var checks_box=document.createElement('div');
+  checks_box.className="checks_box";
+  var checks_text=document.createElement('div');
+  checks_text.className="checks_text";
+  var texts={
+    normal:element.innerHTML,
+    checked:(element.getAttr("checked_text"))?element.getAttr("checked_text"):element.innerHTML,
+    disabled:(element.getAttr("disabled_text"))?element.getAttr("disabled_text"):0
+  }
+  element.texts=texts;
+  if(checked){
+    checks_text.innerHTML=texts.checked;
+    element.add("checks_checked");
+  }else{
+    checks_text.innerHTML=texts.normal;
+  }
+  if(disabled){
+    if(texts.disabled){
+      checks_text.innerHTML=texts.disabled;
+    }
+    element.add("checks_disabled");
+  }
+  element.innerHTML="";
+  element.appendChild(checks_box);
+  element.appendChild(checks_text);
+  element.checks_text=checks_text;
+  element.addListener("click",function(){
+    if(this.disabled){
+      return;
+    }
+    this.checked=true;
+    this.setAttr("checked",true);
+    this.add("checks_checked");
+    checks_text.innerHTML=this.texts.checked;
+    if(this.group&&__UI_radiolist[this.group]){
+      __UI_radiolist[this.group].value=this.value;
+      __Event.emit("radio-"+this.group+"-change",{
+        value:this.value,
+        element:this
+      })
+      var list=__UI_radiolist[this.group].list;
+      for(var i=0;i<list.length;i++){
+        if(list[i]!=this){
+          list[i].checked=false;
+          list[i].setAttr("checked",false);
+          list[i].remove("checks_checked");
+          list[i].checks_text.innerHTML=list[i].texts.normal;
+        }
+      }
+    }
+  })
+  element.disable=function(){
+    this.disabled=true;
+    this.setAttr("disabled",true);
+    this.add("checks_disabled");
+    this.orgtext=this.innerHTML;
+    if(this.texts.disabled){
+      checks_text.innerHTML=this.texts.disabled;
+    }
+  }
+  element.addListener("disable",element.disable);
+  element.enable=function(){
+    this.disabled=false;
+    this.setAttr("disabled",false);
+    this.remove("checks_disabled");
+    if(this.orgtext){
+      checks_text.innerHTML=this.orgtext;
+    }
+  }
+  element.addListener("enable",element.enable);
+})
+__UI.add('img','standard',function(element){
+  element.add("SYSUI_img_standard");
+  var picture=element.getAttr("src");
+  picture=(picture)?picture:"";
+  var loading_ani=element.innerHTML;
+  loading_ani=(loading_ani)?loading_ani:SYSLIB.settings.default_img_loading_ani;
+  element.innerHTML="";
+  var img_box=document.createElement('img');
+  img_box.className="img_box";
+  img_box.src=picture;
+  img_box.onload=function(){
+    cover_box.style.opacity=0;
+    setTimeout(function(){
+      cover_box.style.display="none";
+      setTimeout(function(){
+        img_box.style.display="block";
+        setTimeout(function(){
+          img_box.style.opacity=1;
+        },20)
+      },20)
+    },300)
+  }
+  var cover_box=document.createElement('div');
+  cover_box.className="cover_box";
+  cover_box.innerHTML=loading_ani;
+  element.appendChild(img_box);
+  element.appendChild(cover_box);
+})
+__UI.add('select','standard',function(element){
+  element.add("SYSUI_select_standard");
+  var disabled=element.getAttr("disabled");
+  disabled=(disabled&&disabled!="false")?true:false;
+  element.disabled=disabled;
+  var value=element.getAttr("value");
+  value=(value)?value:0;
+  var icolor=element.getAttr("icolor");
+  icolor=(icolor)?icolor:'#a3cd3d';
+  var default_t=element.getAttr("default");
+  default_t=(default_t)?default_t:'-';
+
+  var select_top=document.createElement('div');
+  select_top.className="select_top";
+  var select_box=document.createElement('div');
+  select_box.className="select_box";
+  var select_bar=document.createElement('div');
+  select_bar.className="select_bar";
+
+  var select_text=document.createElement('div');
+  select_text.className="select_text";
+  var select_icon=document.createElement('span');
+  select_icon.className="select_icon";
+
+
+  select_icon.icon_down='<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="11" height="12" viewBox="0 0 11 12"><g></g><path d="M10.788 4.714q0 0.355-0.248 0.603l-4.359 4.359q-0.254 0.254-0.609 0.254-0.362 0-0.603-0.254l-4.359-4.359q-0.254-0.241-0.254-0.603 0-0.355 0.254-0.609l0.496-0.502q0.261-0.248 0.609-0.248 0.355 0 0.603 0.248l3.254 3.254 3.254-3.254q0.248-0.248 0.603-0.248 0.348 0 0.609 0.248l0.502 0.502q0.248 0.261 0.248 0.609z" fill="'+icolor+'" /></svg>'
+  select_icon.icon_up='<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="11" height="12" viewBox="0 0 11 12"><g></g><path d="M10.788 8.143q0 0.355-0.248 0.603l-0.502 0.502q-0.254 0.254-0.609 0.254-0.362 0-0.603-0.254l-3.254-3.248-3.254 3.248q-0.241 0.254-0.603 0.254t-0.603-0.254l-0.502-0.502q-0.254-0.241-0.254-0.603 0-0.355 0.254-0.609l4.359-4.359q0.248-0.248 0.603-0.248 0.348 0 0.609 0.248l4.353 4.359q0.254 0.254 0.254 0.609z" fill="'+icolor+'" /></svg>';
+  
+  select_icon.innerHTML=select_icon.icon_down;
+
+  select_text.innerHTML=default_t;
+  if(disabled){
+    element.add("select_disabled");
+  }
+
+  var dlist=[],
+      childs=element.childNodes;
+  for(var i=0;i<childs.length;i++){
+    if(childs[i].tagName){
+      var value=childs[i].getAttribute('value');
+      value=(value)?value:childs[i].innerHTML;
+      dlist.push({
+        text:childs[i].innerHTML,
+        value:value
+      });
+    }
+  }
+  element.innerHTML="";
+  element.appendChild(select_top);
+  element.appendChild(select_box);
+  element.appendChild(select_bar);
+  select_top.appendChild(select_text);
+  select_top.appendChild(select_icon);
+  var fixlock=0;
+  element.addListener("click",function(){
+    if(this.disabled||fixlock){
+      fixlock=0;
+      return;
+    }
+    if(_c(select_box).has("open")){
+      _c(select_box).remove("open");
+      select_icon.innerHTML=select_icon.icon_down;
+      setTimeout(function(){
+        select_box.style.display="none";
+      },200)
+    }else{
+      select_box.style.top=(element.offsetTop+34)+"px";
+      select_box.style.left=(element.offsetLeft+7)+"px";
+      select_box.style.width=(element.offsetWidth-16)+"px";
+      select_box.style.display="block";
+      setTimeout(function(){
+        _c(select_box).add("open");
+      },50)
+      select_icon.innerHTML=select_icon.icon_up;
+    }
+  })
+  element.parseOptions=function(list){
+    element.optionList=list;
+    select_box.innerHTML="";
+    for(var i=0;i<element.optionList.length;i++){
+      element.addOption(element.optionList[i]);
+    }
+  }
+  element.addOption=function(data){
+    var onode=__Dom.nodeparser(document.createElement('div'));
+    onode.value=data.value;
+    onode.innerHTML=data.text;
+    select_box.appendChild(onode);
+    onode.addListener("click",element.selectOption)
+  }
+  element.removeOption=function(num){
+    var node=select_box.childNodes[num];
+    if(node&&node.tagName){
+      select_box.removeChild(node);
+    }
+  }
+  element.selectOption=function(){
+    var value=this.value,
+        text=this.innerHTML;
+    fixlock=1;
+    select_text.style.minWidth=select_text.offsetWidth+"px";
+    select_text.innerHTML=text;
+    element.value=value;
+    __Event.emit("change",{
+      value:value
+    },element);
+    _c(select_box).remove("open");
+    select_icon.innerHTML=select_icon.icon_down;
+    setTimeout(function(){
+      select_box.style.display="none";
+    },200)
+  }
+  element.disable=function(){
+    this.disabled=true;
+    this.setAttr("disabled",true);
+    this.add("select_disabled");
+  }
+  element.addListener("disable",element.disable);
+  element.enable=function(){
+    this.disabled=false;
+    this.setAttr("disabled",false);
+    this.remove("select_disabled");
+  }
+  element.parseOptions(dlist);
+  element.addListener("enable",element.enable);
+})
+
+//
 // NS:MODEL
 // REQUIRE:CORE,TEMPLATE
 // NEED:NONE
@@ -1156,6 +1580,425 @@ __Model.build = function (name,html,initfunc,attrs,father,formats) {
 //short cuts
 var _m = SYSLIB.namespace("syslib.model").t,
 	JUMP_TO = SYSLIB.namespace("syslib.model").jump_to;
+
+
+//
+// NS:AJAX
+// REQUIRE:CORE
+// NEED:NONE
+//
+
+////////////////// external reqiurement
+
+/*ajax !
+  * snack.js (c) Ryan Florence
+  * https://github.com/rpflorence/snack
+  * MIT License
+  * Inspiration and code adapted from
+  *  MooTools      (c) Valerio Proietti   MIT license
+  *  jQuery        (c) John Resig         Dual license MIT or GPL Version 2
+  *  contentLoaded (c) Diego Perini       MIT License
+  *  Zepto.js      (c) Thomas Fuchs       MIT License
+*/
+typeof Object.create!="function"&&(Object.create=function(a){function b(){}b.prototype=a;return new b}),!function(a){var b=a.snack={},c=0,d=Object.prototype.toString,e=[].indexOf,f=[].push;b.extend=function(){if(arguments.length==1)return b.extend(b,arguments[0]);var a=arguments[0];for(var c,d=1,e=arguments.length;d<e;d++)for(c in arguments[d])a[c]=arguments[d][c];return a},b.extend({v:"1.2.3",bind:function(a,b,c){c=c||[];return function(){f.apply(c,arguments);return a.apply(b,c)}},punch:function(a,c,d,e){var f=a[c];a[c]=e?function(){f.apply(a,arguments);return d.apply(a,arguments)}:function(){var c=[].slice.call(arguments,0);c.unshift(b.bind(f,a));return d.apply(a,c)}},create:function(a,c){var d=Object.create(a);if(!c)return d;for(var e in c){if(!c.hasOwnProperty(e))continue;if(!a[e]||typeof c[e]!="function"){d[e]=c[e];continue}b.punch(d,e,c[e])}return d},id:function(){return++c},each:function(a,b,c){if(a.length===void 0){for(var d in a)a.hasOwnProperty(d)&&b.call(c,a[d],d,a);return a}for(var e=0,f=a.length;e<f;e++)b.call(c,a[e],e,a);return a},parseJSON:function(b){if(typeof b=="string"){b=b.replace(/^\s+|\s+$/g,"");var c=/^[\],:{}\s]*$/.test(b.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,"@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,"]").replace(/(?:^|:|,)(?:\s*\[)+/g,""));if(!c)throw"Invalid JSON";var d=a.JSON;return d&&d.parse?d.parse(b):(new Function("return "+b))()}},isArray:function(a){return a instanceof Array||d.call(a)=="[object Array]"},indexOf:e?function(a,b){return e.call(b,a)}:function(a,b){for(var c=0,d=b.length;c<d;c++)if(b[c]===a)return c;return-1}})}(window),!function(a,b){var c={},d;a.wrap=function(b,e){typeof b=="string"&&(b=d(b,e)),b.length||(b=[b]);var f=Object.create(c),g=0,h=b.length;for(;g<h;g++)f[g]=b[g];f.length=h,f.id=a.id();return f},a.extend(a.wrap,{define:function(b,d){if(typeof b!="string")for(var e in b)a.wrap.define(e,b[e]);else c[b]=d},defineEngine:function(a){d=a}}),a.wrap.defineEngine(function(a,c){typeof c=="string"&&(c=b.querySelector(c));return(c||b).querySelectorAll(a)})}(snack,document),!function(a,b,c){function l(){try{i.doScroll("left")}catch(a){setTimeout(l,50);return}k("poll")}function k(d){if(d.type!="readystatechange"||c.readyState=="complete")(d.type=="load"?b:c)[e](f+d.type,k,!1),!g&&(g=!0)&&a.each(j,function(a){a.apply(c)})}var d=c.addEventListener?"addEventListener":"attachEvent",e=c.addEventListener?"removeEventListener":"detachEvent",f=c.addEventListener?"":"on",g=!1,h=!0,i=c.documentElement,j=[];a.extend({stopPropagation:function(a){a.stopPropagation?a.stopPropagation():a.cancelBubble=!0},preventDefault:function(a){a.preventDefault?a.preventDefault():a.returnValue=!1}}),a.listener=function(b,g){b.delegate&&(b.capture=!0,_handler=g,g=function(d){var e=d.target||d.srcElement,f=typeof b.delegate=="string"?a.wrap(b.delegate,b.node):b.delegate(b.node);while(e&&a.indexOf(e,f)==-1)e=e.parentNode;e&&e!==this&&e!==c&&_handler.call(e,d,e)}),b.context&&(g=a.bind(g,b.context));var h={attach:function(){b.node[d](f+b.event,g,b.capture)},detach:function(){b.node[e](f+b.event,g,b.capture)},fire:function(){g.apply(b.node,arguments)}};h.attach();return h},a.ready=function(a){g?a.apply(c):j.push(a)};if(c.createEventObject&&i.doScroll){try{h=!b.frameElement}catch(m){}h&&l()}c[d](f+"DOMContentLoaded",k,!1),c[d](f+"readystatechange",k,!1),b[d](f+"load",k,!1)}(snack,window,document),!function(a){a.publisher=function(b){var c={};b=b||{},a.extend(b,{subscribe:function(b,d,e){var f={fn:d,ctxt:e||{}};c[b]||(c[b]=[]);var g={attach:function(){c[b].push(f)},detach:function(){c[b].splice(a.indexOf(d,c[b]),1)}};g.attach();return g},publish:function(b,d){if(!c[b])return!1;a.each(c[b],function(a){a.fn.apply(a.ctxt,d||[])});return c[b].length}});return b},a.publisher(a)}(snack),!function(a,b,c){function e(){}a.JSONP=function(b,d){var e="jsonp"+a.id(),f=c.createElement("script"),g=!1;a.JSONP[e]=function(b){g=!1,delete a.JSONP[e],d(b)},typeof b.data=="object"&&(b.data=a.toQueryString(b.data));var h={send:function(){g=!0,f.src=b.url+"?"+b.key+"=snack.JSONP."+e+"&"+b.data,c.getElementsByTagName("head")[0].appendChild(f)},cancel:function(){g&&f.parentNode&&f.parentNode.removeChild(f),g=!1,a.JSONP[e]=function(){delete a.JSONP[e]}}};b.now!==!1&&h.send();return h},a.toQueryString=function(b,c){var d=[];a.each(b,function(b,e){c&&(e=c+"["+e+"]");var f;if(a.isArray(b)){var g={};a.each(b,function(a,b){g[b]=a}),f=a.toQueryString(g,e)}else typeof b=="object"?f=a.toQueryString(b,e):f=e+"="+encodeURIComponent(b);b!==null&&d.push(f)});return d.join("&")};var d=function(){var a=function(){return new XMLHttpRequest},b=function(){return new ActiveXObject("MSXML2.XMLHTTP")},c=function(){return new ActiveXObject("Microsoft.XMLHTTP")};try{a();return a}catch(d){try{b();return b}catch(d){c();return c}}}();a.request=function(b,c){if(!(this instanceof a.request))return new a.request(b,c);var e=this;e.options=a.extend({},e.options,b),e.callback=c,e.xhr=new d,e.headers=e.options.headers,e.options.now!==!1&&e.send()},a.request.prototype={options:{exception:e,url:"",data:"",method:"get",now:!0,headers:{"X-Requested-With":"XMLHttpRequest",Accept:"text/javascript, text/html, application/xml, text/xml, */*"},async:!0,emulation:!0,urlEncoded:!0,encoding:"utf-8"},onStateChange:function(){var a=this,b=a.xhr;if(b.readyState==4&&!!a.running){a.running=!1,a.status=0;try{var c=b.status;a.status=c==1223?204:c}catch(d){}b.onreadystatechange=e;var f=a.status>=200&&a.status<300?[!1,a.xhr.responseText||"",a.xhr.responseXML]:[a.status];a.callback.apply(a,f)}},setHeader:function(a,b){this.headers[a]=b;return this},getHeader:function(a){try{return this.xhr.getResponseHeader(a)}catch(b){return null}},send:function(){var b=this,d=b.options;if(b.running)return b;b.running=!0;var e=d.data||"",f=String(d.url),g=d.method.toLowerCase();typeof e!="string"&&(e=a.toQueryString(e));if(d.emulation&&a.indexOf(g,["get","post"])<0){var h="_method="+g;e=e?h+"&"+e:h,g="post"}if(d.urlEncoded&&a.indexOf(g,["post","put"])>-1){var i=d.encoding?"; charset="+d.encoding:"";b.headers["Content-type"]="application/x-www-form-urlencoded"+i}f||(f=c.location.pathname);var j=f.lastIndexOf("/");j>-1&&(j=f.indexOf("#"))>-1&&(f=f.substr(0,j)),e&&g=="get"&&(f+=(f.indexOf("?")>-1?"&":"?")+e,e=null);var k=b.xhr;k.open(g.toUpperCase(),f,open.async,d.user,d.password),d.user&&"withCredentials"in k&&(k.withCredentials=!0),k.onreadystatechange=a.bind(b.onStateChange,b);for(var l in b.headers)try{k.setRequestHeader(l,b.headers[l])}catch(m){d.exception.apply(b,[l,b.headers[l]])}k.send(e),d.async||b.onStateChange();return b},cancel:function(){var a=this;if(!a.running)return a;a.running=!1;var b=a.xhr;b.abort(),b.onreadystatechange=e,a.xhr=new d;return a}}}(snack,window,document),!function(a,b){function d(b,c,d,e){var f=b.data(d);f&&a.each(f,function(a){a[c].apply(b,e)});return b}function c(a){return a.replace(/\s+/g," ").replace(/^\s+|\s+$/g,"")}a.wrap.define({data:function(){var a={};return function(b,c){var d=a[this.id];d||(d=a[this.id]={});if(c===void 1)return d[b];return d[b]=c}}(),each:function(b,c){return a.each(this,b,c)},addClass:function(a){return this.each(function(b){c(b.className).indexOf(a)>-1||(b.className=c(b.className+" "+a))})},removeClass:function(a){return this.each(function(b){b.className=b.className.replace(new RegExp("(^|\\s)"+a+"(?:\\s|$)"),"$1")})},attach:function(b,c,d){var e=b.split("."),f=[];e[1]&&(f=this.data(e[1])||[]),this.each(function(b){var g={node:b,event:e[0]};d&&(g.delegate=d),f.push(a.listener(g,c))}),e[1]&&this.data(e[1],f);return this},detach:function(a){d(this,"detach",a,null,!0),this.data(a,null);return this},fire:function(a,b){return d(this,"fire",a,b)},delegate:function(a,b,c){return this.attach(a,c,b)}})}(snack,document)
+
+/////////////////
+
+
+__Ajax=SYSLIB.namespace("syslib.ajax");
+__Ajax.post = function (api,datas,rf_success,rf_error,notasync,timeout) {
+  	var async = (notasync)?false:true;
+  	snack.request({
+     	method:"post",
+     	url:api,
+		format:"json",
+     	data:datas,
+     	async:async,
+     	timeout:(timeout)?timeout:36000
+    },
+    function (err,data) {
+	 	data=JSON.parse(data);
+		if(err){
+			if(rf_error) {
+     			rf_error(errorThrown);
+				return;
+  			}
+		}
+   		if(rf_success) {
+     		rf_success(data);
+   		}
+	});
+}
+__Ajax.getfile = function (url,rf_success,rf_error,async) {
+  	var $tt = "";
+  	snack.request({
+     	method:"get",
+     	format:"html",
+     	url:url,
+     	async:(async)?async:false,
+     	timeout:36000
+     },
+     function (err,data) {
+		if(err){
+			if(rf_error) {
+         		rf_error(errorThrown);
+				return;
+      		}
+		}
+       	if(rf_success) {
+         	rf_success(data);
+       	}else{
+         	$tt =  data;
+       	}
+  	});
+  	return $tt;
+}
+__Ajax.load = function (file,cb,err) {
+  	snack.request({
+        method:"get",
+        dataType:"html",
+        url:file,
+        timeout:100000
+    },function (err2,data) {
+		if(err2){
+			if(err) {
+         		err(err2);
+				return;
+      		}
+		}
+        if(cb) {
+            cb(data);
+        }
+        return data;
+    });
+}
+
+//short cuts
+var _post = SYSLIB.namespace("syslib.ajax").post;
+//
+// NS:Vilade
+// REQUIRE:CORE
+// NEED:NONE
+//
+__Vilade=SYSLIB.namespace("syslib.vilade")
+__Vilade.list = {
+	"email":function (ipt) {
+    	// contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
+    	return /^((([a-z]|\d|[!#\$%&'\*\+\-\/ = \?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/ = \?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$/i.test(ipt);
+  	},
+  	"url":function (ipt) {
+    	// contributed by Scott Gonzalez: http://projects.scottsplayground.com/iri/
+    	return /^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,; = ]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,; = ]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,; = ]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,; = ]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,; = ]|:|@)|\/|\?)*)?$/i.test(ipt);
+  	},
+  	"date":function (ipt) {
+    	return !/Invalid|NaN/.test(new Date(ipt).toString());
+  	},
+  	"dateISO":function (ipt) {
+    	return /^\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}$/.test(ipt);
+  	},
+  	"number":function (ipt) {
+    	return /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(ipt);
+  	},
+  	"digits":function (ipt) {
+    	return /^\d+$/.test(ipt);
+  	},
+  	"letterswithbasicpunc":function (ipt) {
+    	return /^[a-z\-.,()'"\s]+$/i.test(ipt);
+  	},
+  	"alpha+numer":function (ipt) {
+    	return /^\w+$/i.test(ipt);
+  	},
+  	"lettersonly":function (ipt) {
+   		return /^[a-z]+$/i.test(ipt);
+  	},
+  	"nowhitespace":function (ipt) {
+    	return /^\S+$/i.test(ipt);
+  	},
+  	"int":function (ipt) {
+    	return /^-?\d+$/.test(ipt);
+  	},
+  	"+int":function (ipt) {
+    	return /^[0-9]*[1-9][0-9]*$/.test(ipt);
+  	},
+  	"0+int":function (ipt) {
+    	return /^\d+$/.test(ipt);
+  	},
+  	"0-int":function (ipt) {
+    	return /^((-\d+)|(0+))$/.test(ipt);
+  	},
+  	"-int":function (ipt) {
+    	return /^-[0-9]*[1-9][0-9]*$/.test(ipt);
+  	},
+  	"0+float":function (ipt) {
+    	return /^\d+(\.\d+)?$/.test(ipt);
+  	},
+  	"+float":function (ipt) {
+    	return /^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/.test(ipt);
+  	},
+  	"0-float":function (ipt) {
+    	return /^((-\d+(\.\d+)?)|(0+(\.0+)?))$/.test(ipt);
+  	},
+  	"-float":function (ipt) {
+    	return /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/.test(ipt);
+  	},
+  	"float":function (ipt) {
+    	return /^(-?\d+)(\.\d+)?$/.test(ipt);
+  	},
+  	"alpha":function (ipt) {
+    	return /^[A-Za-z]+$/.test(ipt);
+  	},
+  	"ualpha":function (ipt) {
+    	return /^[A-Z]+$/.test(ipt);
+  	},
+  	"lalpha":function (ipt) {
+    	return /^[a-z]+$/.test(ipt);
+  	},
+  	"chinesemobile":function (ipt) {
+    	return /^1[3|4|5|8][0-9]\d{4,8}$/.test(ipt);
+  	},
+  	"chineseid":function (idcard) {
+	    var area = {11:"北京",12:"天津",13:"河北",14:"山西",15:"内蒙古",21:"辽宁",22:"吉林",23:"黑龙江",31:"上海",32:"江苏",33:"浙江",34:"安徽",35:"福建",36:"江西",37:"山东",41:"河南",42:"湖北",43:"湖南",44:"广东",45:"广西",46:"海南",50:"重庆",51:"四川",52:"贵州",53:"云南",54:"西藏",61:"陕西",62:"甘肃",63:"青海",64:"宁夏",65:"新疆",71:"台湾",81:"香港",82:"澳门",91:"国外"},
+	        idcard,Y,JYM,
+	        S,M,
+	        idcard_array  =  new Array(),
+	        idcard_array  =  idcard.split("");
+    	//地区检验
+    	if(area[parseInt(idcard.substr(0,2))] == null) {
+      		return false;//"身份证地区非法!"
+    	}
+    	//身份号码位数及格式检验
+    	switch(idcard.length) {
+      		case 15:
+          		if ( (parseInt(idcard.substr(6,2))+1900) % 4  ==  0 || ((parseInt(idcard.substr(6,2))+1900) % 100  ==  0 && (parseInt(idcard.substr(6,2))+1900) % 4  ==  0 )) {
+            		ereg = /^[1-9][0-9]{5}[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}$/;//测试出生日期的合法性
+          		}else{
+            		ereg = /^[1-9][0-9]{5}[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|1[0-9]|2[0-8]))[0-9]{3}$/;//测试出生日期的合法性
+          		}
+          		if(ereg.test(idcard)) {
+            		return true;
+          		}else{
+            		return false;//"身份证号码出生日期超出范围或含有非法字符!",
+          		}
+          		break;
+      		case 18:
+		        //18位身份号码检测
+		        //出生日期的合法性检查
+		        //闰年月日:((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))
+		        //平年月日:((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|1[0-9]|2[0-8]))
+		        if ( parseInt(idcard.substr(6,4)) % 4  ==  0 || (parseInt(idcard.substr(6,4)) % 100  ==  0 && parseInt(idcard.substr(6,4))%4  ==  0 )) {
+              		ereg = /^[1-9][0-9]{5}19[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}[0-9Xx]$/;//闰年出生日期的合法性正则表达式
+          		}else{
+              		ereg = /^[1-9][0-9]{5}19[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|3[0-1])|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|1[0-9]|2[0-8]))[0-9]{3}[0-9Xx]$/;//平年出生日期的合法性正则表达式
+          		}
+          		if(ereg.test(idcard)) {//测试出生日期的合法性
+              		//计算校验位
+            		S  =  (parseInt(idcard_array[0]) + parseInt(idcard_array[10])) * 7
+			            + (parseInt(idcard_array[1]) + parseInt(idcard_array[11])) * 9
+			            + (parseInt(idcard_array[2]) + parseInt(idcard_array[12])) * 10
+			            + (parseInt(idcard_array[3]) + parseInt(idcard_array[13])) * 5
+			            + (parseInt(idcard_array[4]) + parseInt(idcard_array[14])) * 8
+			            + (parseInt(idcard_array[5]) + parseInt(idcard_array[15])) * 4
+			            + (parseInt(idcard_array[6]) + parseInt(idcard_array[16])) * 2
+			            + parseInt(idcard_array[7]) * 1
+			            + parseInt(idcard_array[8]) * 6
+			            + parseInt(idcard_array[9]) * 3 ;
+            		Y  =  S % 11;
+            		M  =  "F";
+            		JYM  =  "10X98765432";
+            		M  =  JYM.substr(Y,1);//判断校验位
+            		if(M  ==  idcard_array[17]) {
+              			return true;
+            		}else{
+              			return false;//"身份证号码校验错误!",
+            		}
+          		}else{
+            		return false;//"身份证号码出生日期超出范围或含有非法字符!",
+          		}
+          		break;
+    		default:
+      			return false;// "身份证号码位数不对!",
+      			break;
+    	}
+  	},
+  	"sysupass":function (ipt) {
+    	return /^[0-9a-zA-Z\!\?\@\#\$\%\^\&\*\(\)\[\]\{\}\|\\]{6,64}$/.test(ipt);
+  	},
+  	"systag":function (ipt) {
+    	return /^[0-9a-zA-Z\u4e00-\u9fa5\']{1,4}$/.test(ipt);
+  	},
+  	"sysitemname":function (ipt) {
+    	return /^[\S]{1,24}$/.test(ipt);
+  	},
+  	"chineseonly":function (ipt) {
+    	return /^[\u4e00-\u9fa5]{1,}$/.test(ipt);
+  	},
+  	"sysuname":function (ipt) {
+    	return /^[0-9a-zA-Z\u4e00-\u9fa5\_]{1,12}$/.test(ipt);
+  	}
+}
+__Vilade.vilade = function (ipt,rule) {
+  	if(__Vilade.list[rule]) {
+   		return __Vilade.list[rule](ipt);
+  	}else{
+  		__Error.log(2,"Vilade : can't find "+rule);
+  	}
+}
+
+//short cuts
+var _is = SYSLIB.namespace("syslib.vilade").vilade;
+//
+// NS:COOKIES
+// REQUIRE:CORE
+// NEED:NONE
+//
+__Cookies=SYSLIB.namespace("syslib.cookies");
+__Cookies.get = function (c_name,defaultvar) {
+  	var $defaultvar = defaultvar||"";
+  	if (document.cookie.length>0){
+      	c_start = document.cookie.indexOf(c_name + " = ");
+		if(c_start==-1){
+			c_start = document.cookie.indexOf(c_name + "=");
+		}
+      	if (c_start!= -1){ 
+	        c_start = c_start + c_name.length+1;
+	        c_end = document.cookie.indexOf(";",c_start);
+        	if (c_end == -1) {
+        		c_end = document.cookie.length;
+       		} 
+      		var $rvar = unescape(document.cookie.substring(c_start,c_end));
+      		return ($rvar!= "")?$rvar:$defaultvar;
+      	}else{
+      		return $defaultvar;
+      	}
+  	}else{
+  		return $defaultvar;
+  	}
+}
+__Cookies.set = function (c_name,value,expiredays) {
+  	var exdate = new Date();
+  	exdate.setDate(exdate.getDate()+(expiredays||14));
+  	document.cookie = c_name+ " = " +escape(value)+((expiredays == null) ? "" : ";expires = "+exdate.toGMTString()+"; path = /");
+}
+__Cookies.clean = function (c_name) {
+  	__Cookies.set(c_name,"");
+}
+
+//
+// NS:GEO
+// REQUIRE:CORE
+// NEED:NONE
+//
+__Geo=SYSLIB.namespace("syslib.geo");
+__Geo.get=function (scb,err) {
+  	var getgeo = function (scb,scb2,err) {
+    	if (navigator.geolocation) {
+          	navigator.geolocation.getCurrentPosition(scb,function (error) {
+        		switch(error.code) {
+		            case error.PERMISSION_DENIED:
+		                console.log("GEO: User denied the request for Geolocation.");
+		                break;
+		            case error.POSITION_UNAVAILABLE:
+		                console.log("GEO: Location information is unavailable.");
+		                break;
+		            case error.TIMEOUT:
+		                console.log("GEO: The request to get user location timed out.");
+		                break;
+		            case error.UNKNOWN_ERROR:
+		                console.log("GEO: An unknown error occurred.");
+		                break;
+            	}
+        		if(scb2) {
+        			scb2();
+        		}else{ 
+        			if(err) {
+        				err();
+        			}
+        		}
+      		});
+       	}else{
+      		if(scb2) {
+      			scb2();
+      		}
+    	}
+  	}
+  	getgeo(function (e) {
+    	snack.JSONP({
+       		url:'http://api.map.baidu.com/geocoder/v2/',
+			key:'callback',
+       		data:{ak:'6f7bcd8ebbe8209777f27f32fed49746',location:(e.coords.latitude+","+e.coords.longitude),output:'json',pois:1}
+       	},function (data) {
+	        if(!data||!data.result) {
+	          	return err();
+	        }
+	        var pos = {
+	          	accuracy:e.coords.accuracy,
+	          	altitude:e.coords.altitude,
+	          	altitudeAccuracy:e.coords.altitudeAccuracy,
+	          	heading:e.coords.heading,
+	          	latitude:e.coords.latitude,
+	          	longitude:e.coords.longitude,
+	          	speed:e.coords.speed,
+	          	timestamp:e.timestamp,
+	          	address:data.result.formatted_address,
+	          	city:data.result.addressComponent.city,
+	          	district:data.result.addressComponent.district,
+	          	province:data.result.addressComponent.province,
+	          	street:data.result.addressComponent.street,
+	          	street_number:data.result.addressComponent.street_number
+	        }
+        	scb(pos);
+    	});
+  	},function (e) {
+    	snack.JSONP({
+	       	url:'http://api.map.baidu.com/location/ip',
+	       	data:{ak:'6f7bcd8ebbe8209777f27f32fed49746'},
+	       	key:'callback'
+	    },function (data) {
+	        if(!data||!data.content) {
+	          	return err();
+	        }
+	        var pos = {
+	          	accuracy:0,
+	          	altitude:0,
+	          	altitudeAccuracy:0,
+	          	heading:0,
+	          	latitude:data.content.point.x,
+	          	longitude:data.content.point.y,
+	          	speed:0,
+	          	timestamp:(new Date()).getTime(),
+	          	address:data.content.address,
+	          	city:data.content.address_detail.city,
+	          	district:data.content.address_detail.district,
+	          	province:data.content.address_detail.province,
+	          	street:data.content.address_detail.street,
+	          	street_number:data.content.address_detail.street_number
+	        }
+        	scb(pos);
+    	});
+  	},err)
+}
+
+
+//
+// NS:SOUND
+// REQUIRE:CORE
+// NEED:NONE
+//
+__Sound=SYSLIB.namespace("syslib.sound")
+__Sound.list = [];
+__Sound.add = function (name,url) {
+  	if(!__Sound.list[name]) {
+    	__Sound.list[name] = url;
+  	}else{
+  		
+  	}
+}
+__Sound.device = document.createElement("audio");
+__Sound.play = function (name) {
+  	__Sound.device.src = __Sound.list[name];
+  	__Sound.device.play();
+}
+
 
 
 //
