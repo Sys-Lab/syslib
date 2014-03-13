@@ -14,8 +14,11 @@ __Shareto.sharelist={
 		return ('http://shuqian.qq.com/post?from=3&title='+ encodeURIComponent((ipt.title))+ '&uri=' + encodeURIComponent(ipt.url)+ '&jumpback=2&noui=1');
 	},
 	"douban_recommand":function(ipt){
-		
-		return ('http://www.douban.com/recommend/?url='+ encodeURIComponent(ipt.url)+ '&title=' + encodeURIComponent((ipt.title))+ '&sel='+encodeURIComponent((ipt.data))+'&v=1');
+		var $opic=""
+		if(ipt.pic){
+			$opic='&image='+encodeURIComponent((ipt.pic));
+		}
+		return ('http://www.douban.com/share/service?bm=1&href='+ encodeURIComponent(ipt.url)+ '&title=' + encodeURIComponent((ipt.title))+ '&sel='+encodeURIComponent((ipt.data))+'&updated=&name=0'+$opic);
 	},
 	"qq_zone":function(ipt){
 		var $odata=""
@@ -24,7 +27,7 @@ __Shareto.sharelist={
 		}
 		var $opic=""
 		if(ipt.pic){
-			$opic='pics='+encodeURIComponent((ipt.pics));
+			$opic='&pics='+encodeURIComponent((ipt.pic));
 		}
 		
 		return ('http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url='+ encodeURIComponent(ipt.url)+ '&title=' + encodeURIComponent((ipt.title))+ $odata+$opic);
@@ -256,12 +259,12 @@ __Shareto.sharelist={
 	
 }
 __Shareto.share=function(ipt,rule){
-	if(__shareto.sharelist[rule]){
+	if(__Shareto.sharelist[rule]){
 		
 		return (__Shareto.sharelist[rule](ipt));
 	}
 }
-
+__shareto=__Shareto.share;
 
 
 

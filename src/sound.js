@@ -14,6 +14,8 @@ __Sound.add = function (name,url) {
 }
 __Sound.device = document.createElement("audio");
 __Sound.play = function (name) {
+	//nodewebkit bugs
+	__Sound.device = document.createElement("audio");
   	__Sound.device.src = __Sound.list[name];
   	__Sound.device.play();
 }
