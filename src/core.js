@@ -93,12 +93,31 @@ SYSLIB={
 	      clearTimeout(SYSLIB.include_checklock);
 	    }
 	    SYSLIB.include_checklock=setTimeout(function(){
-	    	__Error.log(0,"INCLUDE : all file loaded");
 	        if(!SYSLIB.include_need&&SYSLIB.include_end_callback){
+	        	__Error.log(0,"INCLUDE : all file loaded");
 	          	SYSLIB.include_end_callback();
+	        }else{
+	        	SYSLIB.check_loadend();
 	        }
 	    },500);
 	},
+	includecb:function(name){
+		if(!name){
+			var name =this.includeLink;
+		}
+		var lock=0;
+		for(var i in SYSLIB.included){
+			if(i.indexOf(name)!=-1){
+				lock=1;
+				break;
+			}
+		}
+		if(lock){
+			__Error.log(0,"INCLUDE : included "+(name));
+	      SYSLIB.include_need--;
+	      SYSLIB.check_loadend();
+		}
+  	},
 	include:function (file,callback) {
 		var files  =  typeof file  ==  "string" ? [file]:file,
 			i  =  0;
@@ -129,12 +148,26 @@ SYSLIB={
 				newnode.includeLink=link;
 				__Error.log(0,"INCLUDE : including "+newnode.includeLink);
 				SYSLIB.include_need++;
-				document.body.appendChild(newnode);
-				newnode.onload=function(){
-					__Error.log(0,"INCLUDE : included "+this.includeLink);
-			        SYSLIB.include_need--;
-			        SYSLIB.check_loadend();
-			    }
+				if(isCSS){
+					newnode.onload=function(){
+						__Error.log(0,"INCLUDE : included "+(this.includeLink));
+						SYSLIB.include_need--;
+						SYSLIB.check_loadend();
+					}
+				}else{
+					if(window.addEventListener&&!IS_IE){
+						SYSLIB.includecb=0;
+						newnode.onload=function(){
+							__Error.log(0,"INCLUDE : included "+(this.includeLink));
+						      SYSLIB.include_need--;
+						      SYSLIB.check_loadend();
+						}
+					}else{
+						newnode.setAttribute("onload","SYSLIB.includecb()");
+					}
+				}
+				
+			    document.body.appendChild(newnode);
 				SYSLIB.included[SYSLIB.includePath+ttp[0]] = 1;
 		    }
 	    }
@@ -181,4 +214,24 @@ window.onerror  =  function(errorMessage, errorUrl, errorLine){
 	__Error.log(2,errorMessage+" onLine :"+((errorLine)?errorLine:"unknow Of ")+((errorUrl)?errorUrl:"unknow File"));
 	return (SYSLIB.settings['release'])?true:false;
 }
+//iefix
+if(!Array.indexOf){
+    Array.prototype.indexOf = function(obj){              
+        for(var i=0; i<this.length; i++){
+            if(this[i]==obj){
+                return i;
+            }
+        }
+        return -1;
+    }
+}
 
+window.getWinSize= function(){
+    if(window.innerWidth== undefined){
+        var B= document.body,
+        D= document.documentElement;
+        window.innerWidth=Math.max(D.clientWidth, B.clientWidth);
+		window.innerHeight=Math.max(D.clientHeight, B.clientHeight);
+    }
+    return [window.innerWidth, window.innerHeight];
+}

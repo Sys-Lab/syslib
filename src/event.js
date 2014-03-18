@@ -39,15 +39,20 @@ __Event.Listen=function(event,listener,nopopup,level,element){
 	if(!__Event.Listeners[element.eventtoken][event]){
 		__Event.Listeners[element.eventtoken][event]=new Array();
 		if(element!=__Event.global){
-			if(!Element.prototype.addEventListener){
-				element.attachEvent('on'+event,function(){
-					__Event.emit(event,window.event,element,this);
-				})
-			}else{
+			if(typeof Element== undefined){
+				Element={};
+			}
+			if(Element.prototype.addEventListener){
 				element.addEventListener(event,function(e){
 					__Event.emit(event,e,element,this);
 				},false)
+				return;
+			}else{
+				element['on'+event]=function(e){
+					__Event.emit(event,window.event,element,this);
+				}
 			}
+			
 		}
 	}
 	var elementinfo=(element.id)?("#"+element.id):element.eventtoken;
@@ -167,7 +172,7 @@ __Event.emit=function(event,data,element,scope){
 			var nopopup=list[i].nopopup;
 			if(list[i].listener){
 				__Error.log(0,"Event : Event "+elementinfo+"."+event+" emit Listener with level "+i);
-				list[i].listener.call(scope,data);
+				list[i].listener.call(scope,data,scope);
 			}
 			if(nopopup){
 				__Error.log(0,"Event : Event "+elementinfo+"."+event+" emit break on level "+i);

@@ -19,99 +19,10 @@ __Dom.fresh=function () {
 	    bytag:{},
 	    byattr:{}
 	}
-    __Dom.findall(document.body);
+    __Dom.fall(document.body);
     __Error.log(0,"DOM : fresh cache.");
 }
-__Dom.nodeparser=function(node){
-	node.find=function(ipt){
-		return __Dom.find(ipt,this);
-	}
-	node.searchdom=function(ipt){
-		return __Dom.search(ipt,this);
-	}
-	node.searchcontent=function(ipt){
-		return __Dom.searchcontent(ipt,this);
-	}
-	node.has=function(ipt){
-		return __Dom.class(this).has(ipt);
-	}
-	node.class=function(){
-		return __Dom.class(this).get();
-	}
-	node.add=function(ipt){
-		return __Dom.class(this).add(ipt);
-	}
-	node.remove=function(ipt){
-		return __Dom.class(this).remove(ipt);
-	}
-	node.replace=function(ipt,to){
-		return __Dom.class(this).replace(ipt,to);
-	}
-  node.getAttr=function(attrnames){
-    if(typeof(attrnames)!='object'){
-      return this.getAttribute(attrnames);
-    }else{
-      var attrs=[];
-      for(var i=0;i<attrnames.length;i++){
-        attrs.push(this.getAttribute(attrnames[i]))
-      }
-      return attrs;
-    }
-  }
-  node.setAttr=function(attrsets,val){
-    if(typeof(attrsets)!='object'){
-      if(typeof(val)!='undefined'){
-        this.setAttribute(attrsets,val);
-      }else{
-        __Error.log(2,"Node : can't set attribute missing value!");
-      }
-    }else{
-      if(attrsets.length){
-        if(typeof(val)!='undefined'){
-          if(typeof(val)!='object'){
-            for(var i=0;i<attrsets.length;i++){
-              this.setAttribute(attrsets[i],val);
-            }
-          }else{
-            if(val.length){
-              if(val.length>=attrsets.length){
-                this.setAttribute(attrsets[i],val[i]);
-              }else{
-                __Error.log(2,"Node : can't set attribute when key's length > value's length!");
-              }
-            }else{
-              __Error.log(2,"Node : can't set attribute invilade value!");
-            }
-          } 
-        }else{
-          __Error.log(2,"Node : can't set attribute missing value!");
-        }
-      }else{
-        for(var i in attrsets){
-          this.setAttribute(i,attrsets[i]);
-        }
-      }
-    }
-  }
-  if(__Event){
-      node.addListener=function(event,listener,nopopup,level){
-        return __Event.Listen(event,listener,nopopup,level,this);
-      }
-      node.removeListener=function(event,listener,nopopup,level){
-        return __Event.unListen(event,listener,nopopup,level,this);
-      }
-      node.clearListener=function(){
-        return __Event.clear(this);
-      }
-  }
-  if(__Util){
-      node.globalposition=function(event,listener,nopopup,level){
-        return __Util.globalposition(this);
-      }
-  }
-	return node;
-}
-__Dom.findall = function (father) {
+__Dom.fall = function (father) {
     if(father.tagName) {
     	var list = father.childNodes;
     	__Dom.domcache.allnodes.push(__Dom.nodeparser(father));
@@ -119,15 +30,15 @@ __Dom.findall = function (father) {
         	if(list.length>0) {
         		var i = 0;
         		for(i = 0;i<list.length;i++) {
-          			__Dom.findall(list[i]);
+          			__Dom.fall(list[i]);
         		}
       		}else{
-        		__Dom.findall(list);
+        		__Dom.fall(list);
       		}
     	}
   	}
 }
-__Dom.find = function (ipt,from) {
+__Dom.f = function (ipt,from) {
   	this.findthis = function (ipt,from) {
     	var $query = ipt.split("#"),
     		$nodes = 0;
@@ -245,7 +156,7 @@ __Dom.find = function (ipt,from) {
     	}
 	}
   	//##########################
-  	//U:$dom = __Dom.find("bellow");
+  	//U:$dom = __Dom.f("bellow");
   	//#id or .class or <tag> or [attr = val] mutil arg must use &&.
   	//E.G. "<div>&&.ffg&&[type = ll]"
   	//Do not support RE FOR NOW !
@@ -256,7 +167,7 @@ __Dom.find = function (ipt,from) {
     	var $k = 0;
   	}else{
   		if(from.tagName){
-  			var $k = __Dom.findall(from);
+  			var $k = __Dom.fall(from);
   		}else{
   			var $k = from;
   		}
@@ -355,7 +266,7 @@ __Dom.search = function (ipt,from) {
     	}
   	}else{
     	if(from.tagName){
-  			var $k = __Dom.findall(from);
+  			var $k = __Dom.fall(from);
   		}else{
   			var $k = from;
   		}
@@ -394,7 +305,7 @@ __Dom.searchcontent = function (ipt,from) {
   	__Error.log(0,"DOM : searchcontent "+ipt);
   	return $nodesn;
 }
-__Dom.class = function (domnodes) {
+__Dom.c= function (domnodes) {
   	if(!domnodes) {
       	return;
   	}
@@ -505,11 +416,116 @@ __Dom.class = function (domnodes) {
   	}
   	return $this;
 }
-
+__Dom.nodeparser=function(node){
+  node.f=function(ipt){
+    return __Dom.f(ipt,this);
+  }
+  node.searchdom=function(ipt){
+    return __Dom.search(ipt,this);
+  }
+  node.searchcontent=function(ipt){
+    return __Dom.searchcontent(ipt,this);
+  }
+  node.has=function(ipt){
+    return __Dom.c(this).has(ipt);
+  }
+  node.c=function(){
+    return __Dom.c(this).get();
+  }
+  node.add=function(ipt){
+    return __Dom.c(this).add(ipt);
+  }
+  node.remove=function(ipt){
+    return __Dom.c(this).remove(ipt);
+  }
+  node.replace=function(ipt,to){
+    return __Dom.c(this).replace(ipt,to);
+  }
+  node.getAttr=function(attrnames){
+    if(typeof(attrnames)!='object'){
+      return this.getAttribute(attrnames);
+    }else{
+      var attrs=[];
+      for(var i=0;i<attrnames.length;i++){
+        attrs.push(this.getAttribute(attrnames[i]))
+      }
+      return attrs;
+    }
+  }
+  node.setAttr=function(attrsets,val){
+    if(typeof(attrsets)!='object'){
+      if(typeof(val)!='undefined'){
+        this.setAttribute(attrsets,val);
+      }else{
+        __Error.log(2,"Node : can't set attribute missing value!");
+      }
+    }else{
+      if(attrsets.length){
+        if(typeof(val)!='undefined'){
+          if(typeof(val)!='object'){
+            for(var i=0;i<attrsets.length;i++){
+              this.setAttribute(attrsets[i],val);
+            }
+          }else{
+            if(val.length){
+              if(val.length>=attrsets.length){
+                this.setAttribute(attrsets[i],val[i]);
+              }else{
+                __Error.log(2,"Node : can't set attribute when key's length > value's length!");
+              }
+            }else{
+              __Error.log(2,"Node : can't set attribute invilade value!");
+            }
+          } 
+        }else{
+          __Error.log(2,"Node : can't set attribute missing value!");
+        }
+      }else{
+        for(var i in attrsets){
+          this.setAttribute(i,attrsets[i]);
+        }
+      }
+    }
+  }
+  if(__Event){
+      node.addListener=function(event,listener,nopopup,level){
+        return __Event.Listen(event,listener,nopopup,level,this);
+      }
+      node.removeListener=function(event,listener,nopopup,level){
+        return __Event.unListen(event,listener,nopopup,level,this);
+      }
+      node.clearListener=function(){
+        return __Event.clear(this);
+      }
+  }
+  if(__Util){
+      node.globalposition=function(event,listener,nopopup,level){
+        return __Util.globalposition(this);
+      }
+  }
+  return node;
+}
 //short cuts
 
-var _f=SYSLIB.namespace("syslib.dom").find,
+var _f=SYSLIB.namespace("syslib.dom").f,
 	_search=SYSLIB.namespace("syslib.dom").search,
-	_c=SYSLIB.namespace("syslib.dom").class;
+	_c=SYSLIB.namespace("syslib.dom").c;
 
-
+//iefix
+if(!document.getElementsByClassName){
+    document.getElementsByClassName = function(className, element){
+        var children = (element || document).getElementsByTagName('*');
+        var elements = new Array();
+        for (var i=0; i<children.length; i++){
+            var child = children[i];
+            var classNames = child.className.split(' ');
+            for (var j=0; j<classNames.length; j++){
+                if (classNames[j] == className){ 
+                    elements.push(child);
+                    break;
+                }
+            }
+        } 
+        return elements;
+    };
+}
