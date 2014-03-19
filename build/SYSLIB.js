@@ -852,13 +852,11 @@ __Event.Listen=function(event,listener,nopopup,level,element){
 				element.addEventListener(event,function(e){
 					__Event.emit(event,e,element,this);
 				},false)
-				return;
 			}else{
 				element['on'+event]=function(e){
 					__Event.emit(event,window.event,element,this);
 				}
 			}
-			
 		}
 	}
 	var elementinfo=(element.id)?("#"+element.id):element.eventtoken;
