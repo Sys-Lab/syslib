@@ -31,7 +31,7 @@ SYSLIB={
 	      	clearTimeout(SYSLIB.namespaces_checklock);
 	    }
 	    SYSLIB.namespaces_checklock=setTimeout(function(){
-	    	__Error.log(0,"Namespace : all NS loaded");
+	    	
 	    	for(var i in SYSLIB.namespaces_list){
 	    		if(SYSLIB.namespaces_list[i]!=1){
 					__Error.log(2,"Namespace : can't find required ns "+i);
@@ -95,7 +95,7 @@ SYSLIB={
 	    }
 	    SYSLIB.include_checklock=setTimeout(function(){
 	        if(!SYSLIB.include_need&&SYSLIB.include_end_callback){
-	        	__Error.log(0,"INCLUDE : all file loaded");
+	        	
 	          	SYSLIB.include_end_callback();
 	        }else{
 	        	SYSLIB.check_loadend();
@@ -114,7 +114,7 @@ SYSLIB={
 			}
 		}
 		if(lock){
-			__Error.log(0,"INCLUDE : included "+(name));
+			
 	      SYSLIB.include_need--;
 	      SYSLIB.check_loadend();
 		}
@@ -147,11 +147,11 @@ SYSLIB={
 					newnode.setAttribute("src",link);
 				}
 				newnode.includeLink=link;
-				__Error.log(0,"INCLUDE : including "+newnode.includeLink);
+				
 				SYSLIB.include_need++;
 				if(isCSS){
 					newnode.onload=function(){
-						__Error.log(0,"INCLUDE : included "+(this.includeLink));
+						
 						SYSLIB.include_need--;
 						SYSLIB.check_loadend();
 					}
@@ -159,7 +159,7 @@ SYSLIB={
 					if(window.addEventListener){
 						SYSLIB.includecb=0;
 						newnode.onload=function(){
-							__Error.log(0,"INCLUDE : included "+(this.includeLink));
+							
 						      SYSLIB.include_need--;
 						      SYSLIB.check_loadend();
 						}
@@ -174,7 +174,7 @@ SYSLIB={
 	    }
 	},
 	exclude:function(filename, filetype) {
-		__Error.log(0,"EXCLUDE : excluded "+filetype+": "+filename);
+		
 	    var targetelement = (filetype == "js")? "script" : (filetype == "css")? "link" : "none", //determine element type to create nodelist from
 	        targetattr = (filetype == "js")? "src" : (filetype == "css")? "href" : "none", //determine corresponding attribute to test for
 	        allsuspects = document.getElementsByTagName(targetelement),
@@ -295,7 +295,7 @@ __Dom.fresh=function () {
 	    byattr:{}
 	}
     __Dom.fall(document.body);
-    __Error.log(0,"DOM : fresh cache.");
+    
 }
 __Dom.fall = function (father) {
     if(father.tagName) {
@@ -447,7 +447,7 @@ __Dom.f = function (ipt,from) {
   			var $k = from;
   		}
   	}
-  	__Error.log(0,"DOM : find "+ipt);
+  	
   	if(ipt.indexOf("&&")>0) {
     	$j = ipt.split("&&");
     	for($i = 0;$i<$j.length;$i++) {
@@ -546,7 +546,7 @@ __Dom.search = function (ipt,from) {
   			var $k = from;
   		}
   	}
-  	__Error.log(0,"DOM : search "+ipt);
+  	
   	if(ipt.indexOf("&&")>0) {
     	$j = ipt.split("&&");
     	for($i = 0;$i<$j.length;$i++) {
@@ -577,7 +577,7 @@ __Dom.searchcontent = function (ipt,from) {
       		$nodesn.push($nodes);
     	}
   	}
-  	__Error.log(0,"DOM : searchcontent "+ipt);
+  	
   	return $nodesn;
 }
 __Dom.c= function (domnodes) {
@@ -867,7 +867,7 @@ __Event.Listen=function(event,listener,nopopup,level,element){
 			listener:listener,
 			nopopup:nopopup
 		})
-		__Error.log(0,"Event : Event "+elementinfo+"."+event+"'s Listener with Level "+listenerList.length+" is added.");
+		
 	}else{
 		
 		if(!listenerList[level]){
@@ -876,9 +876,9 @@ __Event.Listen=function(event,listener,nopopup,level,element){
 				nopopup:nopopup
 			}
 			if(level==LOWEST){
-				__Error.log(0,"Event : Event "+elementinfo+"."+event+"'s Listener with LOWEST level added.");
+				
 			}else{
-				__Error.log(0,"Event : Event "+elementinfo+"."+event+"'s Listener with Level "+level+" is added.");
+				
 			}
 		}else{
 			if(level==LOWEST){
@@ -898,9 +898,9 @@ __Event.Listen=function(event,listener,nopopup,level,element){
 				nopopup:nopopup
 			}
 			if(newlevel==LOWEST){
-				__Error.log(1,"Event : Event "+elementinfo+"."+event+"'s Listener with Level "+level+" is used. Using LOWEST level instead.");
+				
 			}else{
-				__Error.log(1,"Event : Event "+elementinfo+"."+event+"'s Listener with Level "+level+" is used. Using "+newlevel+" level instead.");
+				
 			}
 		}
 		
@@ -911,19 +911,19 @@ __Event.unListen=function(event,listener,nopopup,level,element,all){
 		element=__Event.global;
 	}
 	if(!element.eventtoken){
-		__Error.log(1,"Event : element With no eventtoken!");
+		
 		return;
 	}
 	var elementinfo=(element.id)?("#"+element.id):element.eventtoken;
 	if(!__Event.Listeners[element.eventtoken]||!__Event.Listeners[element.eventtoken][event]){
-		__Error.log(1,"Event : Event "+elementinfo+"."+event+" has no Listener to unListen !");
+		
 		return;
 	}
 	var list=__Event.Listeners[element.eventtoken][event];
 	for(var i=0;i<list.length;i++){
 		if(list[i]){
 			if(list[i].listener&&list[i].listener==listener&&list[i].nopopup==nopopup){
-				__Error.log(0,"Event : Event "+elementinfo+"."+event+"'s Listener with Level "+i+" is removed.");
+				
 				list.splice(i,1);
 				if(!all){
 					break;
@@ -941,46 +941,46 @@ __Event.clear=function(element){
 		element=__Event.global;
 	}
 	if(element==__Event.global&&SYSLIB.settings.event_safe){
-		__Error.log(1,"Event : can't clear global settings! Please set event_safe to false.");
+		
 		return;
 	}
 	if(!element.eventtoken){
-		__Error.log(1,"Event : element With no eventtoken!");
+		
 		return;
 	}
 	var elementinfo=(element.id)?("#"+element.id):element.eventtoken;
 	if(!__Event.Listeners[element.eventtoken]){
-		__Error.log(1,"Event : Event "+elementinfo+"."+event+" has no Listener to clear !");
+		
 		return;
 	}
 	__Event.Listeners[element.eventtoken]=[];
-	__Error.log(0,"Event : Event "+elementinfo+"'s Listener is cleared.");
+	
 }
 __Event.emit=function(event,data,element,scope){
 	if(!element){
 		element=__Event.global;
 	}
 	if(!element.eventtoken){
-		__Error.log(1,"Event : element With no eventtoken!");
+		
 		return;
 	}
 	var elementinfo=(element.id)?("#"+element.id):element.eventtoken;
 	if(!__Event.Listeners[element.eventtoken]||!__Event.Listeners[element.eventtoken][event]||!__Event.Listeners[element.eventtoken][event].length){
-		__Error.log(1,"Event : Event "+elementinfo+"."+event+" has no Listener !");
+		
 		return;
 	}
 	var list=__Event.Listeners[element.eventtoken][event];
 
-	__Error.log(0,"Event : Event "+event+" emit !");
+	
 	for(var i=0;i<list.length;i++){
 		if(list[i]){
 			var nopopup=list[i].nopopup;
 			if(list[i].listener){
-				__Error.log(0,"Event : Event "+elementinfo+"."+event+" emit Listener with level "+i);
+				
 				list[i].listener.call(scope,data,scope);
 			}
 			if(nopopup){
-				__Error.log(0,"Event : Event "+elementinfo+"."+event+" emit break on level "+i);
+				
 				break;
 			}
 		}
@@ -1068,7 +1068,7 @@ __Template.build=function (f,vals,insertTo,callback) {
       }
     }
     setTimeout(func,50);
-    __Error.log(0,"Template : build html : "+rhtml);
+    
   	return rhtml;
 }
 //short cuts
@@ -1102,7 +1102,7 @@ __UI.add=function(gtype,type,processfunction){
     __UI.list[gtype]={}
   }
   if(__UI.list[gtype][type]&&!SYSLIB.settings.ui_overwrite){
-    __Error.log(1,"UI : can't overwrite existing ui with type "+gtype+"."+type+" ! Please set ui_overwrite to true.");
+    
     return;
   }
   __UI.list[gtype][type]=processfunction;
@@ -1503,14 +1503,14 @@ __UI.add('select','standard',function(element){
 __Model = SYSLIB.namespace("syslib.model","syslib.template");
 __Model.t = function (name) {
 	if(!__Model.list[name]){
-		__Error.log(1,"Model : model "+name+" dosen't exist .");
+		
 	}
   	return __Model.list[name];
 };
 __Model.list = {};
 __Model.add = function (name,html,required,initfunc,attrs,father,formats) {
   	if(__Model.list[name]) {
-    	__Error.log(1,"Model : model "+name+" already exist .");
+    	
    	 	return;
   	}
   	if(required) {
@@ -1571,7 +1571,7 @@ __Model.build = function (name,html,initfunc,attrs,father,formats) {
       	to:function (stname) {
             var ty = __Model.list[$this.name].statues[stname];
             if(!ty) {
-            	__Error.log(1,"Model : model "+name+"'s statue "+stname+" doesn't exist .");
+            	
               	return;
             }
             if(ty.file) {
@@ -1613,7 +1613,7 @@ __Model.build = function (name,html,initfunc,attrs,father,formats) {
       	},
     	addstatue:function (stname,stfunc,required,delyloadme) {
             if(__Model.list[$this.name].statues[stname]) {
-              	__Error.log(1,"Model : model "+name+"'s statue "+stname+" already exist .");
+              	
               	return;
             }
             if(delyloadme) {
@@ -2062,7 +2062,7 @@ __Sound.add = function (name,url) {
   	if(!__Sound.list[name]) {
     	__Sound.list[name] = url;
   	}else{
-  		__Error.log(1,"Sound : sound "+name+" is already exist.");
+  		
   	}
 }
 __Sound.device = document.createElement("audio");
