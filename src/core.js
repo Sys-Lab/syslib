@@ -155,7 +155,7 @@ SYSLIB={
 						SYSLIB.check_loadend();
 					}
 				}else{
-					if(window.addEventListener&&!IS_IE){
+					if(window.addEventListener){
 						SYSLIB.includecb=0;
 						newnode.onload=function(){
 							__Error.log(0,"INCLUDE : included "+(this.includeLink));
@@ -225,7 +225,8 @@ if(!Array.indexOf){
         return -1;
     }
 }
-
+//fixie
+if (!window.console) console ={log: function() {}};
 window.getWinSize= function(){
     if(window.innerWidth== undefined){
         var B= document.body,
