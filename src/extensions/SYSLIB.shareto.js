@@ -268,7 +268,9 @@ __shareto=__Shareto.share;
 
 
 
-
-
+//iefix
+if(SYSLIB.includecb&&IS_IE){
+  SYSLIB.includecb("SYSLIB.shareto.js");
+}
 
 

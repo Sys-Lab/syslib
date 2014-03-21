@@ -13,12 +13,17 @@ __UI.add('addrinput','standard',function(element){
   element.appendChild(inputbox);
   element.appendChild(selectbox);
   element.getvalue=function(){
-    return inputbox.value;
+    var val=inputbox.value;
+    if(!val){
+      element.codeid=0;
+    }
+    return val;
   };
   element.setvalue=function(val,codeid){
     inputbox.value=val;
     element.value=val;
     element.codeid=codeid;
+    element.last_code=codeid;
     for(var i=0;i<SYSLIB_UI_alladdress.length;i++){
       if(SYSLIB_UI_alladdress[i].code==codeid){
         mlock=SYSLIB_UI_alladdress[i].name;
@@ -40,7 +45,7 @@ __UI.add('addrinput','standard',function(element){
   var autochoose=function(){
     if(selectbox.innerHTML!=""){
       if(selectlist){
-        var choosednode=selectlist[0];
+        var choosednode=(lasthover_select)?lasthover_select:(selectlist[0]);
         element.value=choosednode.innerHTML;
         inputbox.value=choosednode.innerHTML;
         element.codeid=choosednode.codeid;
@@ -59,9 +64,46 @@ __UI.add('addrinput','standard',function(element){
       selectbox.style.display="none";
     }
   }
+  var lasthover_select=0;
+  var keyboardselect=function(way){
+    if(selectbox.innerHTML!=""&&selectlist){
+      if(lasthover_select){
+        lasthover_select.remove("hover");
+      }else{
+        if(way>0){
+          lasthover_select=selectlist[selectlist.length-1];
+        }else{
+          lasthover_select=selectlist[0];
+        }
+      }
+      var pos=selectlist.indexOf(lasthover_select);
+      if(way>0){
+        if(selectlist[pos+1]){
+          lasthover_select=selectlist[pos+1];
+        }else{
+          lasthover_select=selectlist[0];
+        }
+      }else{
+        if(selectlist[pos-1]){
+          lasthover_select=selectlist[pos-1];
+        }else{
+          lasthover_select=selectlist[selectlist.length-1];
+        }
+      }
+      lasthover_select.add("hover");
+    }
+  }
   inputbox.addListener("keyup",function(e){
     if(e.keyCode==13){
       autochoose();
+      return;
+    }
+    if(e.keyCode==38){//up
+      keyboardselect(-1);
+      return;
+    }
+    if(e.keyCode==40){//down
+      keyboardselect(1);
       return;
     }
     if(plock){
@@ -80,6 +122,7 @@ __UI.add('addrinput','standard',function(element){
         event:e
     },element)
   });
+  element.last_code=0;
   var parseselect=function(){
     if(mlock&&((inputbox.value).indexOf(mlock)!=-1)){
       return;
@@ -104,6 +147,7 @@ __UI.add('addrinput','standard',function(element){
             addrcode:this.codeid,
             addrstr:this.innerHTML
         },element)
+        element.last_code=this.codeid;
         inputbox.focus();
         selectbox.innerHTML="";
         selectbox.style.display="none";
@@ -112,16 +156,27 @@ __UI.add('addrinput','standard',function(element){
         element.codeid=this.codeid;
         mlock=this.innerHTML;
       });
+      newnode.addListener("click",function(){
+        if(lasthover_select){
+          lasthover_select.remove("hover");
+        }
+        lasthover_select=this;
+        lasthover_select.add("hover");
+      });
       selectlist.push(newnode);
     }
     for(var i=0;(i<SYSLIB_UI_alladdress.length)&&(k<5);i++){
       //完美匹配
       if((SYSLIB_UI_alladdress[i].name)==(inputbox.value)){
-        element.value=SYSLIB_UI_alladdress[i].name;
-        element.codeid=SYSLIB_UI_alladdress[i].code;
-        mlock=SYSLIB_UI_alladdress[i].name;
-        return;
+        if(!element.last_code||element.last_code!=SYSLIB_UI_alladdress[i].code){
+          element.value=SYSLIB_UI_alladdress[i].name;
+          element.codeid=SYSLIB_UI_alladdress[i].code;
+          mlock=SYSLIB_UI_alladdress[i].name;
+          element.last_code=SYSLIB_UI_alladdress[i].code;
+          return;
+        }
       }
+     
       //包含匹配
       if(((SYSLIB_UI_alladdress[i].name).indexOf(inputbox.value))!=-1){
         k++;
@@ -156,13 +211,14 @@ __UI.add('addrinput','standard',function(element){
       }
     }
     
-    if(k==1){
-      selectbox.innerHTML="";
-      inputbox.value=selectbox.tdata.name;
-      element.value=selectbox.tdata.name;
-      element.codeid=selectbox.tdata.code;
-      mlock=selectbox.tdata.name;
-      selectbox.style.display="none";
+    if(k==1&&(!element.last_code||element.last_code!=selectbox.tdata.code)){
+        selectbox.innerHTML="";
+        inputbox.value=selectbox.tdata.name;
+        element.value=selectbox.tdata.name;
+        element.codeid=selectbox.tdata.code;
+        element.last_code=selectbox.tdata.code;
+        mlock=selectbox.tdata.name;
+        selectbox.style.display="none";
     }else{
       selectbox.style.top=(element.offsetTop+36)+"px";
       selectbox.style.left=(element.offsetLeft+5)+"px";
@@ -184,6 +240,9 @@ function SYSLIB_UI_alladdress_parse(){
     //  name:SYSLIB_UI_alladdress.p[p].n
     // });
     for(c=0;c<SYSLIB_UI_alladdress.p[p].i.length;c++){
+      if(!SYSLIB_UI_alladdress.p[p].i[c]){
+        continue;
+      }
       if(!SYSLIB_UI_alladdress.p[p].i[c].a){
         res.push({
           code:SYSLIB_UI_alladdress.p[p].i[c].c,
@@ -191,6 +250,9 @@ function SYSLIB_UI_alladdress_parse(){
         });
       }
       for(a=0;a<SYSLIB_UI_alladdress.p[p].i[c].a.length;a++){
+        if(!SYSLIB_UI_alladdress.p[p].i[c].a[a]){
+          continue;
+        }
         res.push({
           code:SYSLIB_UI_alladdress.p[p].i[c].a[a].c,
           name:SYSLIB_UI_alladdress.p[p].n+SYSLIB_UI_alladdress.p[p].i[c].n+SYSLIB_UI_alladdress.p[p].i[c].a[a].n
@@ -202,4 +264,7 @@ function SYSLIB_UI_alladdress_parse(){
 }
 SYSLIB_UI_alladdress_parse();
 
-
+//iefix
+if(SYSLIB.includecb&&IS_IE){
+  SYSLIB.includecb("SYSLIB.ui.addrinput.js");
+}

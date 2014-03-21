@@ -27,7 +27,7 @@
 	padding: 10px;
 	display: block;
 }
-.addrinput_selectbox div:hover {
+.addrinput_selectbox div.hover {
   	color:#fff;
   	background-color: #a3cd3d;
 }
