@@ -501,6 +501,7 @@
 }
 .SYSUI_select_standard .select_box{
   position: absolute;
+  z-index: 99990;
   display: none;
   opacity: 0;
   margin-top:-20px;
