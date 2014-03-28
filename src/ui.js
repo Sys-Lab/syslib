@@ -41,7 +41,7 @@ __UI.preprocess=function(html){
         if(attr){
           type=attr[1];
         }
-        attr=attrs.match(/id=[\'\"]([\s\S]*?)[\'\"]/);
+        attr=attrs.match(/[^a-zA-Z0-9_]id=[\'\"]([\s\S]*?)[\'\"]/);
         if(attr){
           orgid=attr[1];
         }
@@ -287,6 +287,7 @@ __UI.add('img','standard',function(element){
   var cover_box=document.createElement('div');
   cover_box.className="cover_box";
   cover_box.innerHTML=loading_ani;
+  element.img_box=img_box;
   element.appendChild(img_box);
   element.appendChild(cover_box);
 })
