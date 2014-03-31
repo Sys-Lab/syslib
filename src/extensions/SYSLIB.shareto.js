@@ -33,11 +33,11 @@ __Shareto.sharelist={
 		return ('http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url='+ encodeURIComponent(ipt.url)+ '&title=' + encodeURIComponent((ipt.title))+ $odata+$opic);
 	},
 	"weibo":function(ipt){
-		var $oappkey="583395093"
+		var $oappkey="2516674591"
 		if(ipt.appkey){
 			$oappkey=(ipt.appkey);
 		}
-		var $osource="bshare"
+		var $osource="marliang.com"
 		if(ipt.source){
 			$osource=encodeURIComponent((ipt.source));
 		}
