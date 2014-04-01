@@ -2135,6 +2135,7 @@ __Util.brhistory=function (action) {
   	history.pushState($state,$state['title'],$state['url']);
 }
 __Util.url=function (ipt) {
+    SYSLIB.settings.set('onhashchange_lock',1);
   	window.location.href = SYSLIB.baseurl+"#"+ipt;
 }
 __Util.preventDefault=function (e) {
@@ -2320,6 +2321,20 @@ __Util.base64={
      	}
      	return out;
 	}
+}
+if ("onhashchange" in window) {
+    window.onhashchange =  function(){
+        if(SYSLIB.settings.onhashchange_lock){
+            SYSLIB.settings.onhashchange_lock=0;
+            return;
+        }
+        if(__Event){
+            __Event.emit("hashchange",{
+                hash:window.location.hash,
+                url:window.location.href
+            })
+        }
+    };
 }
 //short cuts
 var _title = SYSLIB.namespace("syslib.util").title,
