@@ -20,13 +20,13 @@ typeof Object.create!="function"&&(Object.create=function(a){function b(){}b.pro
 
 /////////////////
 
-
 __Ajax=SYSLIB.namespace("syslib.ajax");
 __Ajax.post = function (api,datas,rf_success,rf_error,notasync,timeout) {
   	var async = (notasync)?false:true;
+    var server_set=(SYSLIB.settings.ajax_server);
   	snack.request({
      	method:"post",
-     	url:api,
+     	url:server_set+api,
 		format:"json",
      	data:datas,
      	async:async,
@@ -47,10 +47,11 @@ __Ajax.post = function (api,datas,rf_success,rf_error,notasync,timeout) {
 }
 __Ajax.getfile = function (url,rf_success,rf_error,async) {
   	var $tt = "";
+    var server_set=(SYSLIB.settings.ajax_server);
   	snack.request({
      	method:"get",
      	format:"html",
-     	url:url,
+     	url:server_set+url,
      	async:(async)?async:false,
      	timeout:36000
      },
@@ -70,10 +71,11 @@ __Ajax.getfile = function (url,rf_success,rf_error,async) {
   	return $tt;
 }
 __Ajax.load = function (file,cb,err) {
+  var server_set=(SYSLIB.settings.ajax_server);
   	snack.request({
         method:"get",
         dataType:"html",
-        url:file,
+        url:server_set+file,
         timeout:100000
     },function (err2,data) {
 		if(err2){
