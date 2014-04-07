@@ -1681,6 +1681,7 @@ __Ajax=SYSLIB.namespace("syslib.ajax");
 __Ajax.post = function (api,datas,rf_success,rf_error,notasync,timeout) {
   	var async = (notasync)?false:true;
     var server_set=(SYSLIB.settings.ajax_server);
+    server_set=server_set?server_set:"";
   	snack.request({
      	method:"post",
      	url:server_set+api,
@@ -1693,7 +1694,7 @@ __Ajax.post = function (api,datas,rf_success,rf_error,notasync,timeout) {
 	 	data=JSON.parse(data);
 		if(err){
 			if(rf_error) {
-     			rf_error(errorThrown);
+     			rf_error(err);
 				return;
   			}
 		}
@@ -1705,9 +1706,10 @@ __Ajax.post = function (api,datas,rf_success,rf_error,notasync,timeout) {
 __Ajax.getfile = function (url,rf_success,rf_error,async) {
   	var $tt = "";
     var server_set=(SYSLIB.settings.ajax_server);
+    server_set=server_set?server_set:"";
   	snack.request({
      	method:"get",
-     	format:"html",
+     	format:"text",
      	url:server_set+url,
      	async:(async)?async:false,
      	timeout:36000
@@ -1715,7 +1717,7 @@ __Ajax.getfile = function (url,rf_success,rf_error,async) {
      function (err,data) {
 		if(err){
 			if(rf_error) {
-         		rf_error(errorThrown);
+         		rf_error(err);
 				return;
       		}
 		}
@@ -1729,9 +1731,10 @@ __Ajax.getfile = function (url,rf_success,rf_error,async) {
 }
 __Ajax.load = function (file,cb,err) {
   var server_set=(SYSLIB.settings.ajax_server);
+    server_set=server_set?server_set:"";
   	snack.request({
         method:"get",
-        dataType:"html",
+        dataType:"text",
         url:server_set+file,
         timeout:100000
     },function (err2,data) {
@@ -2001,7 +2004,7 @@ __Geo.get=function (scb,err) {
         				err();
         			}
         		}
-      		});
+      		},{timeout:30000});
        	}else{
       		if(scb2) {
       			scb2();
@@ -2038,7 +2041,7 @@ __Geo.get=function (scb,err) {
   	},function (e) {
     	snack.JSONP({
 	       	url:'http://api.map.baidu.com/location/ip',
-	       	data:{ak:'6f7bcd8ebbe8209777f27f32fed49746'},
+	       	data:{ak:'6f7bcd8ebbe8209777f27f32fed49746','coor':'bd09ll'},
 	       	key:'callback'
 	    },function (data) {
 	        if(!data||!data.content) {

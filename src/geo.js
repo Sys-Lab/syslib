@@ -29,7 +29,7 @@ __Geo.get=function (scb,err) {
         				err();
         			}
         		}
-      		});
+      		},{timeout:30000});
        	}else{
       		if(scb2) {
       			scb2();
@@ -66,7 +66,7 @@ __Geo.get=function (scb,err) {
   	},function (e) {
     	snack.JSONP({
 	       	url:'http://api.map.baidu.com/location/ip',
-	       	data:{ak:'6f7bcd8ebbe8209777f27f32fed49746'},
+	       	data:{ak:'6f7bcd8ebbe8209777f27f32fed49746','coor':'bd09ll'},
 	       	key:'callback'
 	    },function (data) {
 	        if(!data||!data.content) {

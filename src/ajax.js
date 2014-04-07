@@ -24,6 +24,7 @@ __Ajax=SYSLIB.namespace("syslib.ajax");
 __Ajax.post = function (api,datas,rf_success,rf_error,notasync,timeout) {
   	var async = (notasync)?false:true;
     var server_set=(SYSLIB.settings.ajax_server);
+    server_set=server_set?server_set:"";
   	snack.request({
      	method:"post",
      	url:server_set+api,
@@ -36,7 +37,7 @@ __Ajax.post = function (api,datas,rf_success,rf_error,notasync,timeout) {
 	 	data=JSON.parse(data);
 		if(err){
 			if(rf_error) {
-     			rf_error(errorThrown);
+     			rf_error(err);
 				return;
   			}
 		}
@@ -48,9 +49,10 @@ __Ajax.post = function (api,datas,rf_success,rf_error,notasync,timeout) {
 __Ajax.getfile = function (url,rf_success,rf_error,async) {
   	var $tt = "";
     var server_set=(SYSLIB.settings.ajax_server);
+    server_set=server_set?server_set:"";
   	snack.request({
      	method:"get",
-     	format:"html",
+     	format:"text",
      	url:server_set+url,
      	async:(async)?async:false,
      	timeout:36000
@@ -58,7 +60,7 @@ __Ajax.getfile = function (url,rf_success,rf_error,async) {
      function (err,data) {
 		if(err){
 			if(rf_error) {
-         		rf_error(errorThrown);
+         		rf_error(err);
 				return;
       		}
 		}
@@ -72,9 +74,10 @@ __Ajax.getfile = function (url,rf_success,rf_error,async) {
 }
 __Ajax.load = function (file,cb,err) {
   var server_set=(SYSLIB.settings.ajax_server);
+    server_set=server_set?server_set:"";
   	snack.request({
         method:"get",
-        dataType:"html",
+        dataType:"text",
         url:server_set+file,
         timeout:100000
     },function (err2,data) {
