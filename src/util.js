@@ -106,6 +106,18 @@ __Util.token = function (length) {
   	}
   	return $utk;
 }
+__Util.extend=function(des, src, override){
+   if(src instanceof Array){
+       for(var i = 0, len = src.length; i < len; i++)
+            __Util.extend(des, src[i], override);
+   }
+   for(var i in src){
+       if(override || !(i in des)){
+           des[i] = src[i];
+       }
+   }
+   return des;
+}
 __Util.base64={
 	EncodeChars:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
 	DecodeChars:new Array(

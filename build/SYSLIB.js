@@ -852,10 +852,16 @@ __Event.Listen=function(event,listener,nopopup,level,element){
 			if(Element.prototype.addEventListener){
 				element.addEventListener(event,function(e){
 					__Event.emit(event,e,element,this);
-				},false)
+					if(nopopup){
+						__Util.preventDefault(e);
+					}
+				},(nopopup)?true:false)
 			}else{
 				element['on'+event]=function(e){
 					__Event.emit(event,window.event,element,this);
+					if(nopopup){
+						__Util.preventDefault(e);
+					}
 				}
 			}
 		}
@@ -1682,9 +1688,11 @@ __Ajax.post = function (api,datas,rf_success,rf_error,notasync,timeout) {
   	var async = (notasync)?false:true;
     var server_set=(SYSLIB.settings.ajax_server);
     server_set=server_set?server_set:"";
+    var rev_set=(SYSLIB.settings.ajax_rev);
+    rev_set=rev_set?rev_set:"";
   	snack.request({
      	method:"post",
-     	url:server_set+api,
+     	url:server_set+api+rev_set,
 		format:"json",
      	data:datas,
      	async:async,
@@ -2200,6 +2208,18 @@ __Util.token = function (length) {
    		$utk+= $yu[$j];
   	}
   	return $utk;
+}
+__Util.extend=function(des, src, override){
+   if(src instanceof Array){
+       for(var i = 0, len = src.length; i < len; i++)
+            __Util.extend(des, src[i], override);
+   }
+   for(var i in src){
+       if(override || !(i in des)){
+           des[i] = src[i];
+       }
+   }
+   return des;
 }
 __Util.base64={
 	EncodeChars:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",

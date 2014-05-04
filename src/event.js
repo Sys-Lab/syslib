@@ -45,10 +45,16 @@ __Event.Listen=function(event,listener,nopopup,level,element){
 			if(Element.prototype.addEventListener){
 				element.addEventListener(event,function(e){
 					__Event.emit(event,e,element,this);
-				},false)
+					if(nopopup){
+						__Util.preventDefault(e);
+					}
+				},(nopopup)?true:false)
 			}else{
 				element['on'+event]=function(e){
 					__Event.emit(event,window.event,element,this);
+					if(nopopup){
+						__Util.preventDefault(e);
+					}
 				}
 			}
 		}

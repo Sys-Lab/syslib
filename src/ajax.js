@@ -25,9 +25,11 @@ __Ajax.post = function (api,datas,rf_success,rf_error,notasync,timeout) {
   	var async = (notasync)?false:true;
     var server_set=(SYSLIB.settings.ajax_server);
     server_set=server_set?server_set:"";
+    var rev_set=(SYSLIB.settings.ajax_rev);
+    rev_set=rev_set?rev_set:"";
   	snack.request({
      	method:"post",
-     	url:server_set+api,
+     	url:server_set+api+rev_set,
 		format:"json",
      	data:datas,
      	async:async,
