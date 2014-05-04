@@ -1,34 +1,32 @@
-# SYSLIB
+# Getting Started
 
-<a href="http://sys-lab.github.io/syslib" target="_blank">Demo & website</a>
+<a href="http://sys-lab.github.io/syslib" target="_blank">Doc Index</a>
 
-:Now version
-v0.1.0  build 2014022101
 
-This is SysLab's own lib.
-Now opensource.
-I do not have many time on this project.
-This lib is part of the project Marliang.
-So now I will add features only Marliang needs.
-documentation is on the way.
+#Install
 
-suggestions and pull request are welcome !
+Just <a href="http://sys-lab.github.io/syslib" target="_blank">download</a> this latest stable build.
 
-Use 
- node build.js Build
+or clone the repo and use
 
-to build
+node build.js build
 
-Use
- node build.js --help
+to build on your own
 
-For Help 
 
-:TODO
+Then link the SYSLIB.js or syslib.min.js to your page.
 
-1.more UI.
-2.auto clear Listeners for deleted or none exist elements;
-3.auto fresh Dom cache.
-4.documentation.
-5.UI reuse & mixed UI.
+If you want to use SYSLIB UI,you must <a href="https://raw.githubusercontent.com/Sys-Lab/syslib/gh-pages/src/ui.css" target="_blank">download</a> the ui.css and link to your page.
 
+#One more thing
+
+the lib has it's own require system,and it takes some time.
+
+So you'd better use SYSLIB.include to load your app's file in window.nsloaded;
+
+this will be called once SYSLIB and it's plugins are loaded.
+
+
+#the lib can also run on phonegap,and this is no need to use window.nsloaded on phonegap.
+
+Now head to <a href="http://sys-lab.github.io/syslib" target="_blank">Basic usage</a>
