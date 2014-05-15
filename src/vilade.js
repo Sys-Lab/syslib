@@ -77,7 +77,7 @@ __Vilade.list = {
     	return /^[a-z]+$/.test(ipt);
   	},
   	"chinesemobile":function (ipt) {
-    	return /^[\+]?[86]*?1[3|4|5|8][0-9]\d{8}$/.test(ipt);
+    	return /^[\+]?[86]*?1[3|4|5|7|8][0-9]\d{8}$/.test(ipt);
   	},
     "hongkongphone":function (ipt) {
       return /^[\+]?852[0-9]\d{7}$/.test(ipt);
